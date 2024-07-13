@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets2.common.events;
 
+import com.direwolf20.buildinggadgets2.api.gadgets.BlockPos;
 import com.direwolf20.buildinggadgets2.common.blockentities.RenderBlockBE;
 import com.direwolf20.buildinggadgets2.common.blocks.RenderBlock;
 import com.direwolf20.buildinggadgets2.common.worlddata.BG2Data;
@@ -8,21 +9,16 @@ import com.direwolf20.buildinggadgets2.util.GadgetNBT;
 import com.direwolf20.buildinggadgets2.util.GadgetUtils;
 import com.direwolf20.buildinggadgets2.util.datatypes.StatePos;
 import com.direwolf20.buildinggadgets2.util.datatypes.TagPos;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import net.neoforged.neoforge.fluids.FluidStack;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.*;
 
@@ -33,13 +29,13 @@ public class ServerTickHandler {
 
     public static final HashMap<UUID, ServerBuildList> buildMap = new HashMap<>();
 
-    @SubscribeEvent
-    public static void handleTickEndEvent(ServerTickEvent.Pre event) {
+    public static void handleTickEndEvent(TickEvent.ServerTickEvent event) {
         if (buildMap.isEmpty()) return;
 
         for (UUID uuid : buildMap.keySet()) {
             ServerBuildList serverBuildList = buildMap.get(uuid);
-            Player player = event.getServer().getPlayerList().getPlayer(serverBuildList.playerUUID);
+
+            EntityPlayer player = MinecraftServer.getServer().getEntityWorld().func_152378_a(serverBuildList.playerUUID);
             if (player == null) {
                 stopBuilding(uuid); //Clear the remaining list of things to build, removing it after this loop in removeEmptyLists
                 continue;
@@ -64,10 +60,10 @@ public class ServerTickHandler {
         removeEmptyLists(event);
     }
 
-    public static void addToMap(UUID buildUUID, StatePos statePos, Level level, byte renderType, Player player, boolean neededItems, boolean returnItems, ItemStack gadget, ServerBuildList.BuildType buildType, boolean dropContents, BlockPos lookingAt) {
+    public static void addToMap(UUID buildUUID, StatePos statePos, World level, byte renderType, EntityPlayer player, boolean neededItems, boolean returnItems, ItemStack gadget, ServerBuildList.BuildType buildType, boolean dropContents, BlockPos lookingAt) {
         GlobalPos boundPos = GadgetNBT.getBoundPos(gadget);
         int direction = boundPos == null ? -1 : GadgetNBT.getToolValue(gadget, GadgetNBT.IntSettings.BIND_DIRECTION.getName());
-        ServerBuildList serverBuildList = buildMap.computeIfAbsent(buildUUID, k -> new ServerBuildList(level, new ArrayList<>(), renderType, player.getUUID(), neededItems, returnItems, buildUUID, gadget, buildType, dropContents, lookingAt, boundPos, direction));
+        ServerBuildList serverBuildList = buildMap.computeIfAbsent(buildUUID, k -> new ServerBuildList(level, new ArrayList<>(), renderType, player.getUniqueID(), neededItems, returnItems, buildUUID, gadget, buildType, dropContents, lookingAt, boundPos, direction));
         serverBuildList.statePosList.add(statePos);
         serverBuildList.originalSize = serverBuildList.statePosList.size();
     }
@@ -97,13 +93,13 @@ public class ServerTickHandler {
         serverBuildList.statePosList.clear();
     }
 
-    public static void removeEmptyLists(ServerTickEvent.Pre event) {
+    public static void removeEmptyLists(TickEvent.ServerTickEvent event) {
         Iterator<Map.Entry<UUID, ServerBuildList>> iterator = buildMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<UUID, ServerBuildList> entry = iterator.next();
             ServerBuildList serverBuildList = entry.getValue();
             if (entry.getValue().statePosList.isEmpty()) {
-                Player player = event.getServer().getPlayerList().getPlayer(serverBuildList.playerUUID); //We check for the player - if they exist, they finished building - if not they logged off. Remove data from map only if finished building
+                EntityPlayer player = MinecraftServer.getServer().getEntityWorld().func_152378_a(serverBuildList.playerUUID); //We check for the player - if they exist, they finished building - if not they logged off. Remove data from map only if finished building
                 if (serverBuildList.teData != null && !serverBuildList.buildType.equals(ServerBuildList.BuildType.CUT) && player != null) { //If we had teData this was from a cut-Paste, so remove the data from world data if we're not cutting
                     BG2Data bg2Data = BG2Data.get(Objects.requireNonNull(serverBuildList.level.getServer()).overworld());
                     bg2Data.getCopyPasteList(GadgetNBT.getUUID(serverBuildList.gadget), true); //Remove the data
@@ -115,25 +111,24 @@ public class ServerTickHandler {
         }
     }
 
-    public static void build(ServerBuildList serverBuildList, Player player) {
-        Level level = serverBuildList.level;
+    public static void build(ServerBuildList serverBuildList, EntityPlayer player) {
+        World level = serverBuildList.level;
 
         ArrayList<StatePos> statePosList = serverBuildList.statePosList;
         if (statePosList.isEmpty()) return;
         BG2Data bg2Data = BG2Data.get(Objects.requireNonNull(level.getServer()).overworld());
         StatePos statePos = statePosList.remove(0);
-        if (statePos.state.equals(Blocks.VOID_AIR.defaultBlockState()))
+        if (statePos.state.equals(Blocks.air))
             return; //Void_AIR is used for blocks we want to skip
         ArrayList<StatePos> undoList = bg2Data.peekUndoList(GadgetNBT.getUUID(serverBuildList.gadget));
         if (undoList != null && undoList.contains(statePos))
             return; //This really only happens if a cut/paste got interrupted mid-build by a server stop or player logoff
 
         BlockPos blockPos = statePos.pos.offset(serverBuildList.lookingAt);
-        BlockState blockState = statePos.state;
+        Block blockState = statePos.state;
 
-        if (!blockState.getFluidState().isEmpty()) {
-            FluidState fluidState = blockState.getFluidState();
-            if (!fluidState.isEmpty() && fluidState.isSource()) { //This should always be true since we only copy sources
+        if (blockState instanceof BlockLiquid fluidState) {
+            if (fluidState.isOpaqueCube()) { //This should always be true since we only copy sources
                 Fluid fluid = fluidState.getType();
                 FluidStack fluidStack = new FluidStack(fluid, 1000);
                 boolean canDestContainFluid = !fluid.getFluidType().isVaporizedOnPlacement(level, blockPos, fluidStack);
@@ -210,7 +205,7 @@ public class ServerTickHandler {
         }
     }
 
-    public static void exchange(ServerBuildList serverBuildList, Player player) {
+    public static void exchange(ServerBuildList serverBuildList, EntityPlayer player) {
         Level level = serverBuildList.level;
 
         ArrayList<StatePos> statePosList = serverBuildList.statePosList;
@@ -352,7 +347,7 @@ public class ServerTickHandler {
         }
     }
 
-    public static void remove(ServerBuildList serverBuildList, Player player) {
+    public static void remove(ServerBuildList serverBuildList, EntityPlayer player) {
         Level level = serverBuildList.level;
 
         ArrayList<StatePos> statePosList = serverBuildList.statePosList;
@@ -408,7 +403,7 @@ public class ServerTickHandler {
             bg2Data.addToUndoList(serverBuildList.buildUUID, serverBuildList.actuallyBuildList, level);
     }
 
-    public static void undoDestroy(ServerBuildList serverBuildList, Player player) {
+    public static void undoDestroy(ServerBuildList serverBuildList, EntityPlayer player) {
         Level level = serverBuildList.level;
 
         ArrayList<StatePos> statePosList = serverBuildList.statePosList;
@@ -443,7 +438,7 @@ public class ServerTickHandler {
         }
     }
 
-    public static void cut(ServerBuildList serverBuildList, Player player) {
+    public static void cut(ServerBuildList serverBuildList, EntityPlayer player) {
         Level level = serverBuildList.level;
         if (serverBuildList.teData == null)
             serverBuildList.teData = new ArrayList<>(); //Initialize the list since it isn't done in the ServerBuildList class

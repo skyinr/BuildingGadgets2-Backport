@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets2.util;
 
+import com.direwolf20.buildinggadgets2.api.gadgets.BlockPos;
 import com.direwolf20.buildinggadgets2.api.gadgets.GadgetModes;
 import com.direwolf20.buildinggadgets2.api.gadgets.GadgetTarget;
 import com.direwolf20.buildinggadgets2.common.items.*;
@@ -8,13 +9,7 @@ import com.direwolf20.buildinggadgets2.setup.BG2DataComponents;
 import com.direwolf20.buildinggadgets2.util.modes.BaseMode;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.item.ItemStack;
 
 import java.util.*;
 
@@ -102,7 +97,8 @@ public class GadgetNBT {
     final static int undoListSize = 10;
 
     public static void setBoundPos(ItemStack gadget, GlobalPos globalPos) {
-        gadget.set(BG2DataComponents.BOUND_GLOBAL_POS, globalPos);
+        gadget.setTagInfo(globalPos,BG2DataComponents.BOUND_GLOBAL_POS);
+//        gadget.set(BG2DataComponents.BOUND_GLOBAL_POS, globalPos);
     }
 
     public static GlobalPos getBoundPos(ItemStack gadget) {

@@ -3,11 +3,14 @@ package com.direwolf20.buildinggadgets2.common.network;
 import com.direwolf20.buildinggadgets2.BuildingGadgets2;
 import com.direwolf20.buildinggadgets2.common.network.data.*;
 import com.direwolf20.buildinggadgets2.common.network.handler.*;
+import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class PacketHandler {
-    public static void registerNetworking(final RegisterPayloadHandlersEvent event) {
+    @SubscribeEvent
+    public static void registerNetworking( event) {
         final PayloadRegistrar registrar = event.registrar(BuildingGadgets2.MODID);
 
         //Going to Server

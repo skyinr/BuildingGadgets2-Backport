@@ -12,6 +12,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.ForgeModContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,17 +26,9 @@ public class BuildingGadgets2 {
     public static CommonProxy proxy;
 
     public BuildingGadgets2() {
-        Config.register(container);
 
-//        eventBus.addListener(ModSetup::init);
-        ModSetup.TABS.register(eventBus);
-        eventBus.addListener(this::registerCapabilities);
         eventBus.addListener(PacketHandler::registerNetworking);
         ForgeModContainer.getConfig().EVENT_BUS.addListener(BuildingGadgets2Commands::registerCommands);
-
-        if (FMLLoader.getDist().isClient()) {
-            eventBus.addListener(ClientSetup::init);
-        }
     }
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -60,18 +53,19 @@ public class BuildingGadgets2 {
         proxy.serverStarting(event);
     }
 
-//    private void registerCapabilities(RegisterCapabilitiesEvent event) {
-//        event.registerItem(Capabilities.EnergyStorage.ITEM,
-//            (itemStack, context) -> new EnergyStorageItemstack(((BaseGadget) itemStack.getItem()).getEnergyMax(), itemStack),
-//            Registration.Building_Gadget.get(),
-//            Registration.Exchanging_Gadget.get(),
-//            Registration.CopyPaste_Gadget.get(),
-//            Registration.CutPaste_Gadget.get(),
-//            Registration.Destruction_Gadget.get()
-//        );
-//        event.registerBlock(Capabilities.ItemHandler.BLOCK,
-//            (level, pos, state, be, side) -> ((TemplateManagerBE) be).itemHandler,
-//            // blocks to register for
-//            Registration.TemplateManager.get());
-//    }
+    @SubscribeEvent
+    private void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerItem(Capabilities.EnergyStorage.ITEM,
+            (itemStack, context) -> new EnergyStorageItemstack(((BaseGadget) itemStack.getItem()).getEnergyMax(), itemStack),
+            Registration.Building_Gadget.get(),
+            Registration.Exchanging_Gadget.get(),
+            Registration.CopyPaste_Gadget.get(),
+            Registration.CutPaste_Gadget.get(),
+            Registration.Destruction_Gadget.get()
+        );
+        event.registerBlock(Capabilities.ItemHandler.BLOCK,
+            (level, pos, state, be, side) -> ((TemplateManagerBE) be).itemHandler,
+            // blocks to register for
+            Registration.TemplateManager.get());
+    }
 }

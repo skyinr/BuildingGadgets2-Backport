@@ -11,12 +11,10 @@ import javax.annotation.Nullable;
 public class RenderBlock extends Block
 //    implements EntityBlock
 {
-    public RenderBlock(String blockName) {
+    public RenderBlock() {
         super(Material.air);
         this.setResistance(20f)
-            .setBlockUnbreakable()
-            .setBlockName(blockName)
-            .setBlockTextureName(blockName);
+            .setBlockUnbreakable();
     }
 
     @Override

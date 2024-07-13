@@ -2,50 +2,32 @@ package com.direwolf20.buildinggadgets2.common.items;
 
 import com.direwolf20.buildinggadgets2.client.screen.ScreenOpener;
 import com.direwolf20.buildinggadgets2.util.GadgetNBT;
-import net.minecraft.ChatFormatting;
+import com.gtnewhorizon.gtnhlib.util.AnimatedTooltipHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.client.resources.Language;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 import java.util.List;
 
 public class TemplateItem extends Item {
 
     public TemplateItem() {
-        super(new Properties()
-                .stacksTo(1));
+        this.setMaxStackSize(1);
+
+        AnimatedTooltipHandler.addItemTooltip(new ItemStack(this), () -> "buildinggadgets2.templatename");
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, context, tooltip, flagIn);
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.player == null) {
-            return;
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_) {
+        if (!player.isSneaking()) {
+            return super.onItemUse(itemStack, player, world, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_8_, p_77648_9_, p_77648_10_);
         }
-
-        String templateName = GadgetNBT.getTemplateName(stack);
-
-        if (!templateName.isEmpty())
-            tooltip.add(Component.translatable("buildinggadgets2.templatename", templateName).withStyle(ChatFormatting.AQUA));
-
-    }
-
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-        if (!playerIn.isShiftKeyDown())
-            return super.use(worldIn, playerIn, handIn);
-
-        if (worldIn.isClientSide) {
-            ScreenOpener.openMaterialList(playerIn.getItemInHand(handIn));
+        if (world.isRemote) {
+            ScreenOpener.openMaterialList(itemStack);
         }
-
-        return super.use(worldIn, playerIn, handIn);
+        return super.onItemUse(itemStack, player, world, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_8_, p_77648_9_, p_77648_10_);
     }
 }

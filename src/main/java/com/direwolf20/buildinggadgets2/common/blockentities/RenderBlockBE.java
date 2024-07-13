@@ -12,6 +12,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +27,7 @@ import java.util.Random;
 
 import static com.direwolf20.buildinggadgets2.util.GadgetUtils.getSimpleItemForBlock;
 
-public class RenderBlockBE extends BlockEntity {
+public class RenderBlockBE extends TileEntity {
     public byte drawSize;
     public BlockState renderBlock;
     public BlockState sourceBlock;

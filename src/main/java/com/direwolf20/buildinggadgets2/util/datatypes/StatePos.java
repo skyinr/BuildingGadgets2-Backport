@@ -1,8 +1,12 @@
 package com.direwolf20.buildinggadgets2.util.datatypes;
 
+import com.direwolf20.buildinggadgets2.api.gadgets.BlockPos;
 import com.direwolf20.buildinggadgets2.util.GadgetUtils;
 import com.direwolf20.buildinggadgets2.util.ItemStackKey;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,10 +25,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class StatePos {
-    public BlockState state;
+    public Block state;
     public BlockPos pos;
 
-    public StatePos(BlockState state, BlockPos pos) {
+    public StatePos(Block state, BlockPos pos) {
         this.state = state;
         this.pos = pos;
     }
@@ -105,7 +109,7 @@ public class StatePos {
         return rotatedList;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @SideOnly(Side.CLIENT)
     public static Map<ItemStackKey, Integer> getItemList(ArrayList<StatePos> list) {
         Map<ItemStackKey, Integer> itemList = new Object2IntOpenHashMap<>();
         if (list == null || list.isEmpty())

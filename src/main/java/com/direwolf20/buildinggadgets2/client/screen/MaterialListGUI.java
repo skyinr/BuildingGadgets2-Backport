@@ -3,24 +3,19 @@ package com.direwolf20.buildinggadgets2.client.screen;
 import com.direwolf20.buildinggadgets2.BuildingGadgets2;
 import com.direwolf20.buildinggadgets2.client.screen.widgets.ScrollingMaterialList;
 import com.google.common.collect.Lists;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
-public class MaterialListGUI extends Screen {
+import static net.minecraft.client.Minecraft.getMinecraft;
+
+public class MaterialListGUI extends GuiScreen {
 
     public static final int BUTTON_HEIGHT = 20;
     public static final int BUTTONS_PADDING = 4;
 
-    public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(BuildingGadgets2.MODID, "textures/gui/material_list.png");
+    public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(BuildingGadgets2.MODID, "textures/gui/material_list.png");
     public static final int BACKGROUND_WIDTH = 256;
     public static final int BACKGROUND_HEIGHT = 200;
     public static final int BORDER_SIZE = 4;
@@ -44,7 +39,6 @@ public class MaterialListGUI extends Screen {
 
 
     public MaterialListGUI(ItemStack itemStack) {
-        super(Component.translatable("buildinggadgets2.screen.componentslist"));
         this.gadget = itemStack;
     }
 
@@ -53,7 +47,7 @@ public class MaterialListGUI extends Screen {
      * This screen really just draws a background and the buttons, thats about it
      */
     @Override
-    public void init() {
+    public void initGui() {
         this.backgroundX = getXForAlignedCenter(0, width, BACKGROUND_WIDTH);
         this.backgroundY = getYForAlignedCenter(0, height, BACKGROUND_HEIGHT);
 
@@ -64,7 +58,7 @@ public class MaterialListGUI extends Screen {
         this.addRenderableWidget(scrollingList);
 
         int buttonY = getWindowBottomY() - (ScrollingMaterialList.BOTTOM / 2 + BUTTON_HEIGHT / 2);
-        this.buttonClose = Button.builder(Component.translatable("buildinggadgets2.screen.close"), b -> getMinecraft().player.closeContainer())
+        this.buttonClose = Button.builder(Component.translatable("buildinggadgets2.screen.close"), b -> getMinecraft().thePlayer.closeScreen())
                 .pos(0, buttonY)
                 .size(0, BUTTON_HEIGHT)
                 .build();

@@ -1,11 +1,14 @@
 package com.direwolf20.buildinggadgets2.common.events;
 
+import com.direwolf20.buildinggadgets2.api.gadgets.BlockPos;
 import com.direwolf20.buildinggadgets2.util.datatypes.StatePos;
 import com.direwolf20.buildinggadgets2.util.datatypes.TagPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.World;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -22,7 +25,7 @@ public class ServerBuildList {
         CUT
     }
 
-    public Level level;
+    public World level;
     public ArrayList<StatePos> statePosList;
     public ArrayList<TagPos> teData;
     public byte renderType;
@@ -41,7 +44,7 @@ public class ServerBuildList {
     public GlobalPos boundPos;
     public int direction;
 
-    public ServerBuildList(Level level, ArrayList<StatePos> statePosList, byte renderType, UUID playerUUID, boolean needItems, boolean returnItems, UUID buildUUID, ItemStack gadget, BuildType buildType, boolean dropContents, BlockPos lookingAt, GlobalPos boundPos, int direction) {
+    public ServerBuildList(World level, ArrayList<StatePos> statePosList, byte renderType, UUID playerUUID, boolean needItems, boolean returnItems, UUID buildUUID, ItemStack gadget, BuildType buildType, boolean dropContents, BlockPos lookingAt, GlobalPos boundPos, int direction) {
         this.level = level;
         this.statePosList = statePosList;
         this.renderType = renderType;

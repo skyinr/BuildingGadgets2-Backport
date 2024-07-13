@@ -5,21 +5,15 @@ import com.direwolf20.buildinggadgets2.client.screen.widgets.GuiIconActionable;
 import com.direwolf20.buildinggadgets2.client.screen.widgets.IncrementalSliderWidget;
 import com.direwolf20.buildinggadgets2.common.network.data.*;
 import com.direwolf20.buildinggadgets2.util.GadgetNBT;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DestructionGUI extends Screen {
+public class DestructionGUI extends GuiScreen {
     private final Set<IncrementalSliderWidget> sliders = new HashSet<>();
 
     private IncrementalSliderWidget left;
@@ -34,7 +28,7 @@ public class DestructionGUI extends Screen {
     private int originalDown;
     private int originalDepth;
 
-    private Button confirm;
+    private int confirm;
 
     private String sizeString = "";
     private boolean isValidSize = true;
@@ -42,19 +36,19 @@ public class DestructionGUI extends Screen {
 
     private final ItemStack destructionGadget;
 
-    private Button renderTypeButton;
+    private int renderTypeButton;
     private GadgetNBT.RenderTypes renderType;
 
     public DestructionGUI(ItemStack tool, boolean keyDown) {
-        super(Component.empty());
         this.destructionGadget = tool;
         this.keyDown = keyDown;
         renderType = GadgetNBT.getRenderType(tool);
     }
 
+
     @Override
-    public void init() {
-        super.init();
+    public void initGui() {
+        super.initGui();
 
         int x = width / 2;
         int y = height / 2;
@@ -67,17 +61,21 @@ public class DestructionGUI extends Screen {
                     .size(60, 20)
                     .build());*/
 
-        this.addRenderableWidget(Button.builder(Component.translatable("buildinggadgets2.screen.revert"), b -> {
-                    depth.setValue(originalDepth);
-                    right.setValue(originalRight);
-                    left.setValue(originalLeft);
-                    up.setValue(originalUp);
-                    down.setValue(originalDown);
-                    sendPacket();
-                })
-                .pos((x - 30) + 32, y + 65)
-                .size(60, 20)
-                .build());
+        this.drawGradientRect(originalLeft,
+                originalUp,
+                originalRight,
+                confirm,
+
+                depth.setValue(originalDepth);
+                right.setValue(originalRight);
+                left.setValue(originalLeft);
+                up.setValue(originalUp);
+                down.setValue(originalDown);
+                sendPacket();
+            )
+            .pos((x - 30) + 32, y + 65)
+            .size(60, 20)
+            .build());
 
         Button undo_button = new GuiIconActionable(x - 55, y - 75, "undo", Component.translatable("buildinggadgets2.radialmenu.undo"), false, send -> {
             if (send) {
@@ -187,45 +185,42 @@ public class DestructionGUI extends Screen {
         }
     }
 
-    @Override
-    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-        guiGraphics.drawCenteredString(font, this.sizeString, width / 2, (height / 2) + 40, this.isValidSize ? 0x00FF00 : 0xFF2000);
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawScreen(mouseX, mouseY, partialTicks);
+
+        drawCenteredString(font, this.sizeString, width / 2, (height / 2) + 40, this.isValidSize ? 0x00FF00 : 0xFF2000);
         if (!this.isValidSize) {
-            guiGraphics.drawCenteredString(font, Component.translatable("buildinggadgets2.screen.destructiontoolarge"), width / 2, (height / 2) + 50, 0xFF2000);
+            drawCenteredString(font, "buildinggadgets2.screen.destructiontoolarge", width / 2, (height / 2) + 50, 0xFF2000);
         }
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
-        return super.mouseReleased(mouseX, mouseY, mouseButton);
-    }
-
-    @Override
-    public void tick() {
+    public void updateScreen() {
         if (keyDown && !InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), KeyBindings.menuSettings.getKey().getValue())) {
             onClose();
         }
-        super.tick();
+        super.updateScreen();
     }
 
     @Override
-    public boolean isPauseScreen() {
+    public boolean doesGuiPauseGame() {
         return false;
     }
 
-    @Override
-    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
-        if (keyDown)
-            return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
-        InputConstants.Key mouseKey = InputConstants.getKey(p_keyPressed_1_, p_keyPressed_2_);
-        if (p_keyPressed_1_ == 256 || minecraft.options.keyInventory.isActiveAndMatches(mouseKey)) {
-            onClose();
-            return true;
-        }
 
-        return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
-    }
+//    @Override
+//    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
+//        if (keyDown)
+//            return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+//        InputConstants.Key mouseKey = InputConstants.getKey(p_keyPressed_1_, p_keyPressed_2_);
+//        if (p_keyPressed_1_ == 256 || minecraft.options.keyInventory.isActiveAndMatches(mouseKey)) {
+//            onClose();
+//            return true;
+//        }
+//
+//        return super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+//    }
 
 }

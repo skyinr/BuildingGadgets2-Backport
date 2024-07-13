@@ -9,27 +9,13 @@ import com.direwolf20.buildinggadgets2.util.context.ItemActionContext;
 import com.direwolf20.buildinggadgets2.util.datatypes.StatePos;
 import com.direwolf20.buildinggadgets2.util.modes.BaseMode;
 import com.google.common.collect.ImmutableSortedSet;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.Capabilities;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 import java.util.*;
 
@@ -53,37 +39,37 @@ public abstract class BaseGadget extends Item {
         return getEnergyMax();
     }
 
-    @Override
-    public boolean isBarVisible(ItemStack stack) {
-        var energy = stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        if (energy == null) {
-            return false;
-        }
+//    @Override
+//    public boolean isBarVisible(ItemStack stack) {
+//        var energy = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+//        if (energy == null) {
+//            return false;
+//        }
+//
+//        return (energy.getEnergyStored() < energy.getMaxEnergyStored());
+//    }
 
-        return (energy.getEnergyStored() < energy.getMaxEnergyStored());
-    }
+//    @Override
+//    public int getBarWidth(ItemStack stack) {
+//        var energy = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+//        if (energy == null) {
+//            return 0;
+//        }
+//
+//        return Math.min(13 * energy.getEnergyStored() / energy.getMaxEnergyStored(), 13);
+//    }
 
-    @Override
-    public int getBarWidth(ItemStack stack) {
-        var energy = stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        if (energy == null) {
-            return 0;
-        }
+//    @Override
+//    public int getBarColor(ItemStack stack) {
+//        var energy = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+//        if (energy == null) {
+//            return super.getBarColor(stack);
+//        }
+//
+//        return Mth.hsvToRgb(Math.max(0.0F, (float) energy.getEnergyStored() / (float) energy.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F);
+//    }
 
-        return Math.min(13 * energy.getEnergyStored() / energy.getMaxEnergyStored(), 13);
-    }
-
-    @Override
-    public int getBarColor(ItemStack stack) {
-        var energy = stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        if (energy == null) {
-            return super.getBarColor(stack);
-        }
-
-        return Mth.hsvToRgb(Math.max(0.0F, (float) energy.getEnergyStored() / (float) energy.getMaxEnergyStored()) / 3.0F, 1.0F, 1.0F);
-    }
-
-    @OnlyIn(Dist.CLIENT)
+    @SideOnly(Side.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, tooltip, flagIn);
@@ -113,6 +99,20 @@ public abstract class BaseGadget extends Item {
 
             tooltip.add(energyText.withStyle(ChatFormatting.GREEN));
         }
+    }
+
+
+    @Override
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_) {
+        ItemStack gadget = player.getItemInUse();
+
+        if (world.isRemote){
+            return true;
+        }
+
+        BlockHitResult lookingAt = VectorHelper.getLookingAt(player,gadget);
+
+        return super.onItemUse(itemStack, player, world, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_8_, p_77648_9_, p_77648_10_);
     }
 
     /**
@@ -201,7 +201,7 @@ public abstract class BaseGadget extends Item {
 
     public abstract GadgetTarget gadgetTarget();
 
-    public static ItemStack getGadget(Player player) {
+    public static ItemStack getGadget(EntityClientPlayerMP player) {
         ItemStack heldItem = player.getMainHandItem();
         if (!(heldItem.getItem() instanceof BaseGadget)) {
             heldItem = player.getOffhandItem();

@@ -1,14 +1,10 @@
 package com.direwolf20.buildinggadgets2.client.particles;
 
-import com.direwolf20.buildinggadgets2.BuildingGadgets2;
 import com.direwolf20.buildinggadgets2.client.particles.fluidparticle.FluidFlowParticle;
 import com.direwolf20.buildinggadgets2.client.particles.itemparticle.ItemFlowParticle;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-@EventBusSubscriber(modid = BuildingGadgets2.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+//@EventBusSubscriber(modid = BuildingGadgets2.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class ParticleRenderDispatcher {
 
     @SubscribeEvent

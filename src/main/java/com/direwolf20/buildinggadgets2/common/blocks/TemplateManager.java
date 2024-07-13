@@ -23,7 +23,7 @@ public class TemplateManager extends Block
         if (blockBroken != this) {
             TileEntity tileEntity = worldIn.getTileEntity(x, y, z);
             if (tileEntity != null && tileEntity instanceof TemplateManagerBE) {
-                ((TemplateManagerBE) tileEntity).itemHandler.isItemValid()
+                ((TemplateManagerBE) tileEntity).itemHandler.isItemValid();
             }
         }
         super.breakBlock(worldIn, x, y, z, blockBroken, meta);
