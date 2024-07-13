@@ -44,12 +44,12 @@ public class GadgetCutPaste extends BaseGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.CUTPASTEGADGET_MAXPOWER.get();
+        return Config.CUTPASTEGADGET_MAXPOWER;
     }
 
     @Override
     public int getEnergyCost() {
-        return Config.CUTPASTEGADGET_COST.get();
+        return Config.CUTPASTEGADGET_COST;
     }
 
     @OnlyIn(Dist.CLIENT)

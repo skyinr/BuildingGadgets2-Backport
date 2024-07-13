@@ -6,13 +6,12 @@ import com.direwolf20.buildinggadgets2.common.commands.BuildingGadgets2Commands;
 import com.direwolf20.buildinggadgets2.common.items.BaseGadget;
 import com.direwolf20.buildinggadgets2.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets2.setup.*;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.eventhandler.EventBus;
 import net.minecraftforge.common.ForgeModContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,12 +25,9 @@ public class BuildingGadgets2 {
     public static CommonProxy proxy;
 
     public BuildingGadgets2() {
-        EventBus bus = FMLCommonHandler.instance().bus();
-        // Register the deferred registry
-        Registration.init();
         Config.register(container);
 
-        eventBus.addListener(ModSetup::init);
+//        eventBus.addListener(ModSetup::init);
         ModSetup.TABS.register(eventBus);
         eventBus.addListener(this::registerCapabilities);
         eventBus.addListener(PacketHandler::registerNetworking);
@@ -41,11 +37,14 @@ public class BuildingGadgets2 {
             eventBus.addListener(ClientSetup::init);
         }
     }
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        proxy.preInit(event);
+    }
 
     @Mod.EventHandler
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
-        Registration.init();
         proxy.init(event);
     }
 
@@ -61,18 +60,18 @@ public class BuildingGadgets2 {
         proxy.serverStarting(event);
     }
 
-    private void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerItem(Capabilities.EnergyStorage.ITEM,
-            (itemStack, context) -> new EnergyStorageItemstack(((BaseGadget) itemStack.getItem()).getEnergyMax(), itemStack),
-            Registration.Building_Gadget.get(),
-            Registration.Exchanging_Gadget.get(),
-            Registration.CopyPaste_Gadget.get(),
-            Registration.CutPaste_Gadget.get(),
-            Registration.Destruction_Gadget.get()
-        );
-        event.registerBlock(Capabilities.ItemHandler.BLOCK,
-            (level, pos, state, be, side) -> ((TemplateManagerBE) be).itemHandler,
-            // blocks to register for
-            Registration.TemplateManager.get());
-    }
+//    private void registerCapabilities(RegisterCapabilitiesEvent event) {
+//        event.registerItem(Capabilities.EnergyStorage.ITEM,
+//            (itemStack, context) -> new EnergyStorageItemstack(((BaseGadget) itemStack.getItem()).getEnergyMax(), itemStack),
+//            Registration.Building_Gadget.get(),
+//            Registration.Exchanging_Gadget.get(),
+//            Registration.CopyPaste_Gadget.get(),
+//            Registration.CutPaste_Gadget.get(),
+//            Registration.Destruction_Gadget.get()
+//        );
+//        event.registerBlock(Capabilities.ItemHandler.BLOCK,
+//            (level, pos, state, be, side) -> ((TemplateManagerBE) be).itemHandler,
+//            // blocks to register for
+//            Registration.TemplateManager.get());
+//    }
 }

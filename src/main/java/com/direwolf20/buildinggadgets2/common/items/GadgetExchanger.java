@@ -41,12 +41,12 @@ public class GadgetExchanger extends BaseGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.EXCHANGINGGADGET_MAXPOWER.get();
+        return Config.EXCHANGINGGADGET_MAXPOWER;
     }
 
     @Override
     public int getEnergyCost() {
-        return Config.EXCHANGINGGADGET_COST.get();
+        return Config.EXCHANGINGGADGET_COST;
     }
 
     @OnlyIn(Dist.CLIENT)

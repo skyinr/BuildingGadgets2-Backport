@@ -34,12 +34,12 @@ public class GadgetCopyPaste extends BaseGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.COPYPASTEGADGET_MAXPOWER.get();
+        return Config.COPYPASTEGADGET_MAXPOWER;
     }
 
     @Override
     public int getEnergyCost() {
-        return Config.COPYPASTEGADGET_COST.get();
+        return Config.COPYPASTEGADGET_COST;
     }
 
     @OnlyIn(Dist.CLIENT)

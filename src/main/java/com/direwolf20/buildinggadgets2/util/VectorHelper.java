@@ -21,7 +21,7 @@ public class VectorHelper {
     }
 
     public static BlockHitResult getLookingAt(Player player, ClipContext.Fluid rayTraceFluid) {
-        double rayTraceRange = Config.RAYTRACE_RANGE.get();
+        double rayTraceRange = Config.RAYTRACE_RANGE;
         HitResult result = player.pick(rayTraceRange, 0f, rayTraceFluid != ClipContext.Fluid.NONE);
 
         return (BlockHitResult) result;

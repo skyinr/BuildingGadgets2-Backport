@@ -32,12 +32,12 @@ public class GadgetBuilding extends BaseGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.BUILDINGGADGET_MAXPOWER.get();
+        return Config.BUILDINGGADGET_MAXPOWER;
     }
 
     @Override
     public int getEnergyCost() {
-        return Config.BUILDINGGADGET_COST.get();
+        return Config.BUILDINGGADGET_COST;
     }
 
     @OnlyIn(Dist.CLIENT)

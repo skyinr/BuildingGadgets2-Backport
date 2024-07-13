@@ -1,14 +1,14 @@
 package com.direwolf20.buildinggadgets2.setup;
 
 
-import cpw.mods.fml.common.FMLContainer;
 import net.minecraftforge.common.config.Configuration;
+
 import java.io.File;
 
 public class Config {
-    public static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
-    public static final ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
-    public static final ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
+    public static final String CLIENT = "client";
+    public static final String COMMON = "common";
+    public static final String SERVER = "server";
 
     public static final String CATEGORY_GENERAL = "general";
     public static final String CATEGORY_POWER = "power";
@@ -18,111 +18,40 @@ public class Config {
     public static final String SUBCATEGORY_COPYPASTEGADGET = "copypaste_gadget";
     public static final String SUBCATEGORY_DESTRUCTIONGADGET = "destruction_gadget";
 
-    public static ModConfigSpec.IntValue BUILDINGGADGET_MAXPOWER;
-    public static ModConfigSpec.IntValue BUILDINGGADGET_COST;
-    public static ModConfigSpec.IntValue EXCHANGINGGADGET_MAXPOWER;
-    public static ModConfigSpec.IntValue EXCHANGINGGADGET_COST;
-    public static ModConfigSpec.IntValue CUTPASTEGADGET_MAXPOWER;
-    public static ModConfigSpec.IntValue CUTPASTEGADGET_COST;
-    public static ModConfigSpec.IntValue COPYPASTEGADGET_MAXPOWER;
-    public static ModConfigSpec.IntValue COPYPASTEGADGET_COST;
-    public static ModConfigSpec.IntValue DESTRUCTIONGADGET_MAXPOWER;
-    public static ModConfigSpec.IntValue DESTRUCTIONGADGET_COST;
+    public static int BUILDINGGADGET_MAXPOWER;
+    public static int BUILDINGGADGET_COST;
+    public static int EXCHANGINGGADGET_MAXPOWER;
+    public static int EXCHANGINGGADGET_COST;
+    public static int CUTPASTEGADGET_MAXPOWER;
+    public static int CUTPASTEGADGET_COST;
+    public static int COPYPASTEGADGET_MAXPOWER;
+    public static int COPYPASTEGADGET_COST;
+    public static int DESTRUCTIONGADGET_MAXPOWER;
+    public static int DESTRUCTIONGADGET_COST;
 
-    public static ModConfigSpec.IntValue RAYTRACE_RANGE;
-
-    public static void register(File container) {
-        //registerServerConfigs();
-        registerCommonConfigs(container);
-        //registerClientConfigs();
-    }
+    public static int RAYTRACE_RANGE;
 
     public static void synchronizeConfiguration(File configFile) {
         Configuration configuration = new Configuration(configFile);
 
-        greeting = configuration.getString("greeting", Configuration.CATEGORY_GENERAL, greeting, "How shall I greet?");
+        //general
+        RAYTRACE_RANGE = configuration.getInt("rayTraceRange", CATEGORY_GENERAL, 32, 1, 64, "Maximum distance you can build at");
+
+        //power
+        BUILDINGGADGET_MAXPOWER = configuration.getInt("maxPower", SUBCATEGORY_BUILDINGGADGET, 5_000, 0, Integer.MAX_VALUE, "Maximum power for the Building Gadget");
+        BUILDINGGADGET_COST = configuration.getInt("baseCost", SUBCATEGORY_BUILDINGGADGET, 50, 0, Integer.MAX_VALUE, "Base cost per block placed");
+        EXCHANGINGGADGET_MAXPOWER = configuration.getInt("maxPower", SUBCATEGORY_EXCHANGINGGADGET, 500_000, 0, Integer.MAX_VALUE, "Maximum power for the Exchanging Gadget");
+        EXCHANGINGGADGET_COST = configuration.getInt("baseCost", SUBCATEGORY_EXCHANGINGGADGET, 100, 0, Integer.MAX_VALUE, "Base cost per block exchanged");
+        CUTPASTEGADGET_MAXPOWER = configuration.getInt("maxPower", SUBCATEGORY_CUTPASTEGADGET, 5_000_000, 0, Integer.MAX_VALUE, "Maximum power for the Cut and Paste Gadget");
+        CUTPASTEGADGET_COST = configuration.getInt("baseCost", SUBCATEGORY_CUTPASTEGADGET, 50, 0, Integer.MAX_VALUE, "Base cost per block - Checked during CUT, Charged during PASTE");
+        COPYPASTEGADGET_MAXPOWER = configuration.getInt("maxPower", SUBCATEGORY_COPYPASTEGADGET, 1_000_000, 0, Integer.MAX_VALUE, "Maximum power for the Copy and Paste Gadget");
+        COPYPASTEGADGET_COST = configuration.getInt("baseCost", SUBCATEGORY_COPYPASTEGADGET, 50, 0, Integer.MAX_VALUE, "Base cost per block Paste (Copy is Free)");
+        DESTRUCTIONGADGET_MAXPOWER = configuration.getInt("maxPower", SUBCATEGORY_DESTRUCTIONGADGET, 1_000_000, 0, Integer.MAX_VALUE, "Maximum power for the Destruction Gadget");
+        DESTRUCTIONGADGET_COST = configuration.getInt("baseCost", SUBCATEGORY_DESTRUCTIONGADGET, 200, 0, Integer.MAX_VALUE, "Base cost per block Destroyed");
 
         if (configuration.hasChanged()) {
             configuration.save();
         }
-    }
-
-    private static void registerClientConfigs(ModContainer container) {
-        //PowergenConfig.registerClientConfig(CLIENT_BUILDER);
-        //ManaConfig.registerClientConfig(CLIENT_BUILDER);
-        container.registerConfig(ModConfig.Type.CLIENT, CLIENT_BUILDER.build());
-    }
-
-    private static void registerCommonConfigs(FMLContainer container) {
-        COMMON_BUILDER.comment("General settings").push(CATEGORY_GENERAL);
-        generalConfig();
-        COMMON_BUILDER.pop();
-
-        COMMON_BUILDER.comment("Power settings").push(CATEGORY_POWER);
-        powerConfig();
-        COMMON_BUILDER.pop();
-
-        container.registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
-    }
-
-    private static void registerServerConfigs(ModContainer container) {
-        //GeneratorConfig.registerServerConfig(SERVER_BUILDER);
-        //PowergenConfig.registerServerConfig(SERVER_BUILDER);
-        container.registerConfig(ModConfig.Type.SERVER, SERVER_BUILDER.build());
-    }
-
-    private static void generalConfig() {
-        RAYTRACE_RANGE = COMMON_BUILDER.comment("Maximum distance you can build at")
-                .defineInRange("rayTraceRange", 32, 1, 64);
-    }
-
-    private static void powerConfig() {
-        COMMON_BUILDER.comment("Building Gadget").push(SUBCATEGORY_BUILDINGGADGET);
-        BUILDINGGADGET_MAXPOWER = COMMON_BUILDER.comment("Maximum power for the Building Gadget")
-                .defineInRange("maxPower", 500000, 0, Integer.MAX_VALUE);
-        BUILDINGGADGET_COST = COMMON_BUILDER.comment("Base cost per block placed")
-                .defineInRange("baseCost", 50, 0, Integer.MAX_VALUE);
-        COMMON_BUILDER.pop();
-
-        COMMON_BUILDER.comment("Exchanging Gadget").push(SUBCATEGORY_EXCHANGINGGADGET);
-        EXCHANGINGGADGET_MAXPOWER = COMMON_BUILDER.comment("Maximum power for the Exchanging Gadget")
-                .defineInRange("maxPower", 500000, 0, Integer.MAX_VALUE);
-        EXCHANGINGGADGET_COST = COMMON_BUILDER.comment("Base cost per block exchanged")
-                .defineInRange("baseCost", 100, 0, Integer.MAX_VALUE);
-        COMMON_BUILDER.pop();
-
-        COMMON_BUILDER.comment("Cut Paste Gadget").push(SUBCATEGORY_CUTPASTEGADGET);
-        CUTPASTEGADGET_MAXPOWER = COMMON_BUILDER.comment("Maximum power for the Cut and Paste Gadget")
-                .defineInRange("maxPower", 5000000, 0, Integer.MAX_VALUE);
-        CUTPASTEGADGET_COST = COMMON_BUILDER.comment("Base cost per block - Checked during CUT, Charged during PASTE")
-                .defineInRange("baseCost", 50, 0, Integer.MAX_VALUE);
-        COMMON_BUILDER.pop();
-
-        COMMON_BUILDER.comment("Copy Paste Gadget").push(SUBCATEGORY_COPYPASTEGADGET);
-        COPYPASTEGADGET_MAXPOWER = COMMON_BUILDER.comment("Maximum power for the Copy and Paste Gadget")
-                .defineInRange("maxPower", 1000000, 0, Integer.MAX_VALUE);
-        COPYPASTEGADGET_COST = COMMON_BUILDER.comment("Base cost per block Paste (Copy is Free)")
-                .defineInRange("baseCost", 50, 0, Integer.MAX_VALUE);
-        COMMON_BUILDER.pop();
-
-        COMMON_BUILDER.comment("Destruction Gadget").push(SUBCATEGORY_DESTRUCTIONGADGET);
-        DESTRUCTIONGADGET_MAXPOWER = COMMON_BUILDER.comment("Maximum power for the Destruction Gadget")
-                .defineInRange("maxPower", 1000000, 0, Integer.MAX_VALUE);
-        DESTRUCTIONGADGET_COST = COMMON_BUILDER.comment("Base cost per block Destroyed")
-                .defineInRange("baseCost", 200, 0, Integer.MAX_VALUE);
-        COMMON_BUILDER.pop();
-    }
-
-    private static void buildingGadgetConfig() {
-
-    }
-
-    private static void clientConfig() {
-
-    }
-
-    private static void serverConfig() {
-
     }
 
 }

@@ -39,12 +39,12 @@ public class GadgetDestruction extends BaseGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.DESTRUCTIONGADGET_MAXPOWER.get();
+        return Config.DESTRUCTIONGADGET_MAXPOWER;
     }
 
     @Override
     public int getEnergyCost() {
-        return Config.DESTRUCTIONGADGET_COST.get();
+        return Config.DESTRUCTIONGADGET_COST;
     }
 
     @OnlyIn(Dist.CLIENT)
