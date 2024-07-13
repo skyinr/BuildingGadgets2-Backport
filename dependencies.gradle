@@ -1,0 +1,3 @@
+dependencies {
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.5.4-GTNH:dev")
+}
