@@ -6,6 +6,7 @@ import com.direwolf20.buildinggadgets2.client.blockentityrenders.RenderBlockBER;
 import com.direwolf20.buildinggadgets2.client.events.EventKeyInput;
 import com.direwolf20.buildinggadgets2.client.events.RenderLevelLast;
 import com.direwolf20.buildinggadgets2.client.screen.TemplateManagerGUI;
+import cpw.mods.fml.client.FMLClientHandler;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -17,7 +18,7 @@ import net.neoforged.neoforge.common.NeoForge;
 
 @EventBusSubscriber(modid = BuildingGadgets2.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class ClientSetup {
-    public static void init(final FMLClientSetupEvent event) {
+    public static void init(final FMLClientHandler event) {
         NeoForge.EVENT_BUS.addListener(KeyBindings::onClientInput);
 
         //Register our Render Events Class

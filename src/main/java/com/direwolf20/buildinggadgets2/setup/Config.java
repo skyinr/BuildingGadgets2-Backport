@@ -1,9 +1,9 @@
 package com.direwolf20.buildinggadgets2.setup;
 
 
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import cpw.mods.fml.common.FMLContainer;
+import net.minecraftforge.common.config.Configuration;
+import java.io.File;
 
 public class Config {
     public static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
@@ -31,10 +31,20 @@ public class Config {
 
     public static ModConfigSpec.IntValue RAYTRACE_RANGE;
 
-    public static void register(ModContainer container) {
+    public static void register(File container) {
         //registerServerConfigs();
         registerCommonConfigs(container);
         //registerClientConfigs();
+    }
+
+    public static void synchronizeConfiguration(File configFile) {
+        Configuration configuration = new Configuration(configFile);
+
+        greeting = configuration.getString("greeting", Configuration.CATEGORY_GENERAL, greeting, "How shall I greet?");
+
+        if (configuration.hasChanged()) {
+            configuration.save();
+        }
     }
 
     private static void registerClientConfigs(ModContainer container) {
@@ -43,7 +53,7 @@ public class Config {
         container.registerConfig(ModConfig.Type.CLIENT, CLIENT_BUILDER.build());
     }
 
-    private static void registerCommonConfigs(ModContainer container) {
+    private static void registerCommonConfigs(FMLContainer container) {
         COMMON_BUILDER.comment("General settings").push(CATEGORY_GENERAL);
         generalConfig();
         COMMON_BUILDER.pop();

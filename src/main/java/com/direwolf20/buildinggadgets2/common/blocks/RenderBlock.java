@@ -1,25 +1,42 @@
 package com.direwolf20.buildinggadgets2.common.blocks;
 
 import com.direwolf20.buildinggadgets2.common.blockentities.RenderBlockBE;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class RenderBlock extends Block implements EntityBlock {
-    public RenderBlock() {
-        super(Block.Properties.of()
-                .strength(20f)
-                .dynamicShape()
-                .noOcclusion());
+public class RenderBlock extends Block
+//    implements EntityBlock
+{
+    public RenderBlock(String blockName) {
+        super(Material.air);
+        this.setResistance(20f)
+            .setBlockUnbreakable()
+            .setBlockName(blockName)
+            .setBlockTextureName(blockName);
+    }
+
+    @Override
+    public int getRenderType() {
+        return super.getRenderType();
+    }
+
+    @Override
+    public AxisAlignedBB getCollisionBoundingBoxFromPool(World worldIn, int x, int y, int z) {
+        return null;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public boolean canCollideCheck(int meta, boolean includeLiquid) {
+        return false;
     }
 
     @Nullable

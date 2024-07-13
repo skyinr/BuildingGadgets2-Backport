@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -21,16 +22,21 @@ import javax.annotation.Nullable;
 
 import static com.direwolf20.buildinggadgets2.common.containers.TemplateManagerContainer.SLOTS;
 
-public class TemplateManagerBE extends BlockEntity implements MenuProvider {
+public class TemplateManagerBE extends TileEntity
+//    implements MenuProvider
+{
     //public static final TagKey<Item> TEMPLATE_CONVERTIBLES = TagKey.create(Registries.ITEM, ItemReference.TAG_TEMPLATE_CONVERTIBLE);
     //private final IItemHandler EMPTY = new ItemStackHandler(0);
     public final TemplateManagerHandler itemHandler = new TemplateManagerHandler(SLOTS, this);
     //public LazyOptional<TemplateManagerHandler> handlerLazyOptional;
-
-    public TemplateManagerBE(BlockPos pos, BlockState state) {
-        super(Registration.TemplateManager_BE.get(), pos, state);
-        //handlerLazyOptional = LazyOptional.of(() -> itemHandler);
+    public TemplateManagerBE(){
+        super();
     }
+
+//    public TemplateManagerBE(BlockPos pos, BlockState state) {
+//        super(Registration.TemplateManager_BE.get(), pos, state);
+//        //handlerLazyOptional = LazyOptional.of(() -> itemHandler);
+//    }
 
     @Override
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {

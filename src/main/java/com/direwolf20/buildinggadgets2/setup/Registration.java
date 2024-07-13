@@ -7,15 +7,17 @@ import com.direwolf20.buildinggadgets2.common.blocks.RenderBlock;
 import com.direwolf20.buildinggadgets2.common.blocks.TemplateManager;
 import com.direwolf20.buildinggadgets2.common.containers.TemplateManagerContainer;
 import com.direwolf20.buildinggadgets2.common.items.*;
+import cpw.mods.fml.common.eventhandler.EventBus;
+import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.block.Block;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RegistryNamespaced;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -27,15 +29,14 @@ import static com.direwolf20.buildinggadgets2.client.particles.ModParticles.PART
 
 public class Registration {
 
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, MODID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, MODID);
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
     private static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(Registries.MENU, MODID);
     private static final DeferredRegister<SoundEvent> SOUND_REGISTRY = DeferredRegister.create(Registries.SOUND_EVENT, BuildingGadgets2.MODID);
     public static final Supplier<SoundEvent> BEEP = SOUND_REGISTRY.register("beep", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(BuildingGadgets2.MODID, "beep")));
 
-    public static void init(IEventBus eventBus) {
-        BLOCKS.register(eventBus);
+    public static void init() {
+//        BLOCKS.register(eventBus);
         ITEMS.register(eventBus);
         BLOCK_ENTITIES.register(eventBus);
         CONTAINERS.register(eventBus);
@@ -47,7 +48,8 @@ public class Registration {
     }
 
     //Blocks
-    public static final DeferredHolder<Block, RenderBlock> RenderBlock = BLOCKS.register("render_block", RenderBlock::new);
+    public static final Block RenderBlock = GameRegistry.registerBlock(new RenderBlock("render_block"), MODID);
+    public static final Block TemplateManager = GameRegistry.registerBlock(new TemplateManager("template_manager"),MODID);
     public static final DeferredHolder<Block, TemplateManager> TemplateManager = BLOCKS.register("template_manager", TemplateManager::new);
     public static final DeferredHolder<Item, BlockItem> TemplateManager_ITEM = ITEMS.register("template_manager", () -> new BlockItem(TemplateManager.get(), new Item.Properties()));
 
@@ -67,5 +69,5 @@ public class Registration {
 
     //Containers
     public static final DeferredHolder<MenuType<?>, MenuType<TemplateManagerContainer>> TemplateManager_Container = CONTAINERS.register("templatemanager",
-            () -> IMenuTypeExtension.create(TemplateManagerContainer::new));
+        () -> IMenuTypeExtension.create(TemplateManagerContainer::new));
 }
