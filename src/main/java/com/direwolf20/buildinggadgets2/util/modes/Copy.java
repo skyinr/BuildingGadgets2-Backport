@@ -44,7 +44,7 @@ public class Copy extends BaseMode {
         if (copyStart.equals(GadgetNBT.nullPos) || copyEnd.equals(GadgetNBT.nullPos)) return coordinates;
 
         AABB area = VecHelpers.aabbFromBlockPos(copyStart, copyEnd);
-        int maxAxis = 500; //Todo Config?
+        int maxAxis = 500; //Todo BG2Config?
         if (area.getXsize() > maxAxis) {
             player.displayClientMessage(Component.translatable("buildinggadgets2.messages.axistoolarge", "x", maxAxis, area.getXsize()), false);
             return coordinates;
@@ -60,12 +60,12 @@ public class Copy extends BaseMode {
         Stream<BlockPos> areaStream = BlockPos.betweenClosedStream(area);
         long size = areaStream.count();
         int maxSize = 100000;
-        if (size > maxSize) { //Todo Config?
+        if (size > maxSize) { //Todo BG2Config?
             player.displayClientMessage(Component.translatable("buildinggadgets2.messages.areatoolarge", maxSize, size), false);
             return coordinates;
         }
         BlockPos.betweenClosedStream(area).map(BlockPos::immutable).forEach(pos -> {
-            if (GadgetUtils.isValidBlockState(level.getBlockState(pos), level, pos) && !(level.getBlockState(pos).getBlock() instanceof RenderBlock))
+            if (GadgetUtils.isValidBlock(level.getBlockState(pos), level, pos) && !(level.getBlockState(pos).getBlock() instanceof RenderBlock))
                 coordinates.add(new StatePos(GadgetUtils.cleanBlockState(level.getBlockState(pos)), pos.subtract(copyStart)));
             else
                 coordinates.add(new StatePos(Blocks.AIR.defaultBlockState(), pos.subtract(copyStart))); //We need to have a block in EVERY position, so write air if invalid

@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets2.api.gadgets.GadgetTarget;
 import com.direwolf20.buildinggadgets2.common.events.ServerBuildList;
 import com.direwolf20.buildinggadgets2.common.events.ServerTickHandler;
 import com.direwolf20.buildinggadgets2.common.worlddata.BG2Data;
-import com.direwolf20.buildinggadgets2.setup.Config;
+import com.direwolf20.buildinggadgets2.config.BG2Config;
 import com.direwolf20.buildinggadgets2.util.BuildingUtils;
 import com.direwolf20.buildinggadgets2.util.GadgetNBT;
 import com.direwolf20.buildinggadgets2.util.VecHelpers;
@@ -46,12 +46,12 @@ public class GadgetCutPaste extends BaseGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.CUTPASTEGADGET_MAXPOWER;
+        return BG2Config.CUTPASTEGADGET_MAXPOWER;
     }
 
     @Override
     public int getEnergyCost() {
-        return Config.CUTPASTEGADGET_COST;
+        return BG2Config.CUTPASTEGADGET_COST;
     }
 
     @SideOnly(Side.CLIENT)
@@ -139,7 +139,7 @@ public class GadgetCutPaste extends BaseGadget {
         if (cutStart.equals(GadgetNBT.nullPos) || cutEnd.equals(GadgetNBT.nullPos)) return;
 
         AABB area = VecHelpers.aabbFromBlockPos(cutStart, cutEnd);
-        int maxAxis = 500; //Todo Config?
+        int maxAxis = 500; //Todo BG2Config?
         if (area.getXsize() > maxAxis) {
             player.displayClientMessage(Component.translatable("buildinggadgets2.messages.axistoolarge", "x", maxAxis, area.getXsize()), false);
             return;
@@ -154,7 +154,7 @@ public class GadgetCutPaste extends BaseGadget {
         }
         Stream<BlockPos> areaStream = BlockPos.betweenClosedStream(area);
         long size = areaStream.count();
-        int maxSize = 100000; //Todo Config?
+        int maxSize = 100000; //Todo BG2Config?
         if (size > maxSize) {
             player.displayClientMessage(Component.translatable("buildinggadgets2.messages.areatoolarge", maxSize, size), false);
             return;

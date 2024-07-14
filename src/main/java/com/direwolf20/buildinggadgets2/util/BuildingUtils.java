@@ -480,7 +480,7 @@ public class BuildingUtils {
                 continue; //FTB Chunk Protection, etc
             if (level.getBlockState(blockPos.offset(lookingAt)).equals(pos.state))
                 continue; //No need to replace blocks if they already match!
-            if (!GadgetUtils.isValidBlockState(level.getBlockState(blockPos.offset(lookingAt)), level, blockPos))
+            if (!GadgetUtils.isValidBlock(level.getBlockState(blockPos.offset(lookingAt)), level, blockPos))
                 continue;
             if (gadget.getItem() instanceof GadgetBuilding && needItems && !pos.state.canSurvive(level, blockPos.offset(lookingAt)))
                 continue;  //Don't do this validation for copy/paste
@@ -539,7 +539,7 @@ public class BuildingUtils {
                 break; //Break out if we're out of power
             }
             BlockState oldState = level.getBlockState(pos);
-            if (oldState.isAir() || !GadgetUtils.isValidBlockState(oldState, level, pos)) continue;
+            if (oldState.isAir() || !GadgetUtils.isValidBlock(oldState, level, pos)) continue;
             if (!player.isCreative())
                 useEnergy(gadget);
             ServerTickHandler.addToMap(buildUUID, new StatePos(Blocks.AIR.defaultBlockState(), pos), level, GadgetNBT.getRenderTypeByte(gadget), player, false, giveItem, gadget, ServerBuildList.BuildType.DESTROY, dropContents, BlockPos.ZERO);

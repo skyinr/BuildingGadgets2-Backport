@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets2.common.events;
 
-import com.direwolf20.buildinggadgets2.api.gadgets.BlockPos;
 import com.direwolf20.buildinggadgets2.util.datatypes.StatePos;
 import com.direwolf20.buildinggadgets2.util.datatypes.TagPos;
 import net.minecraft.core.BlockPos;

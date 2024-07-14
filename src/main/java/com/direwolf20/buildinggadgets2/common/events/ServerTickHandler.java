@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets2.common.events;
 
-import com.direwolf20.buildinggadgets2.api.gadgets.BlockPos;
 import com.direwolf20.buildinggadgets2.common.blockentities.RenderBlockBE;
 import com.direwolf20.buildinggadgets2.common.blocks.RenderBlock;
 import com.direwolf20.buildinggadgets2.common.worlddata.BG2Data;
@@ -318,7 +317,7 @@ public class ServerTickHandler {
                     giveFluidToPlayer(player, returnStack, serverBuildList.boundPos, serverBuildList.getDirection());
                 }
             } else {
-                List<ItemStack> returnedItems = GadgetUtils.getDropsForBlockStateGadget((ServerLevel) level, blockPos, oldState, serverBuildList.gadget);
+                List<ItemStack> returnedItems = GadgetUtils.getDropsForBlockStateGadget((ServerLevel) level, blockPos, , , oldState, serverBuildList.gadget);
                 for (ItemStack returnedItem : returnedItems)
                     giveItemToPlayer(player, returnedItem, serverBuildList.boundPos, serverBuildList.getDirection());
             }
@@ -359,7 +358,7 @@ public class ServerTickHandler {
         byte drawSize = -99;
 
         BlockState oldState = level.getBlockState(blockPos);
-        if (oldState.isAir() || !GadgetUtils.isValidBlockState(oldState, level, blockPos))
+        if (oldState.isAir() || !GadgetUtils.isValidBlock(oldState, level, blockPos))
             return; //Return without processing
         if (oldState.getBlock() instanceof RenderBlock) {
             BlockEntity blockEntity = level.getBlockEntity(blockPos);
@@ -451,7 +450,7 @@ public class ServerTickHandler {
         BlockState blockState = level.getBlockState(blockPos);
         boolean doRemove = false;
 
-        if (GadgetUtils.isValidBlockState(blockState, level, blockPos) && customCutValidation(blockState, level, player, blockPos)) {
+        if (GadgetUtils.isValidBlock(blockState, level, blockPos) && customCutValidation(blockState, level, player, blockPos)) {
             serverBuildList.updateActuallyBuiltList(new StatePos(blockState, blockPos.subtract(serverBuildList.cutStart)));
             BlockEntity blockEntity = level.getBlockEntity(blockPos);
             if (!blockState.isAir()) //Don't remove air

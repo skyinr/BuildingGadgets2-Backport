@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets2.util;
 
-import net.minecraft.core.Direction;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class MagicHelpers {
     public static String tidyValue(float value) {
@@ -9,11 +9,11 @@ public class MagicHelpers {
 
         int exp = (int) (Math.log(value) / Math.log(1000));
         return String.format("%.1f%c",
-                value / Math.pow(1000, exp),
-                "kMGTPE_____".charAt(exp - 1));
+            value / Math.pow(1000, exp),
+            "kMGTPE_____".charAt(exp - 1));
     }
 
-    public static int invertOnFace(Direction facing, int value) {
-        return value * ((facing == Direction.NORTH || facing == Direction.DOWN || facing == Direction.WEST) ? -1 : 1);
+    public static int invertOnFace(ForgeDirection facing, int value) {
+        return value * ((facing == ForgeDirection.NORTH || facing == ForgeDirection.DOWN || facing == ForgeDirection.WEST) ? -1 : 1);
     }
 }

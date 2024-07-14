@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets2.util;
 
-import com.direwolf20.buildinggadgets2.api.gadgets.BlockPos;
 import com.direwolf20.buildinggadgets2.api.gadgets.GadgetModes;
 import com.direwolf20.buildinggadgets2.api.gadgets.GadgetTarget;
 import com.direwolf20.buildinggadgets2.common.items.*;
@@ -9,6 +8,7 @@ import com.direwolf20.buildinggadgets2.setup.BG2DataComponents;
 import com.direwolf20.buildinggadgets2.util.modes.BaseMode;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
 import java.util.*;
@@ -216,11 +216,12 @@ public class GadgetNBT {
         gadget.remove(BG2DataComponents.COPY_UUID);
     }
 
-    public static void setGadgetBlockState(ItemStack gadget, BlockState blockState) {
-        gadget.set(BG2DataComponents.GADGET_BLOCKSTATE, blockState);
+    public static void setGadgetBlock(ItemStack gadget, Block block) {
+        gadget.setTagCompound(BG2DataComponents.GADGET_BLOCKSTATE,block);
+//        gadget.set(BG2DataComponents.GADGET_BLOCKSTATE, block);
     }
 
-    public static BlockState getGadgetBlockState(ItemStack gadget) {
+    public static Block getGadgetBlockState(ItemStack gadget) {
         return gadget.getOrDefault(BG2DataComponents.GADGET_BLOCKSTATE, Blocks.AIR.defaultBlockState());
     }
 

@@ -3,7 +3,6 @@ package com.direwolf20.buildinggadgets2.setup;
 import com.direwolf20.buildinggadgets2.client.KeyBindings;
 import com.direwolf20.buildinggadgets2.client.events.EventKeyInput;
 import com.direwolf20.buildinggadgets2.client.events.RenderLevelLast;
-import com.direwolf20.buildinggadgets2.client.screen.TemplateManagerGUI;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -20,7 +19,6 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerScreens(GuiScreenEvent event) {
-
 //        event.register(Registration.TemplateManager_Container.get(), TemplateManagerGUI::new);
     }
 

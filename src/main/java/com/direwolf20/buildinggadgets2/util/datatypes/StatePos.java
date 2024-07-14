@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets2.util.datatypes;
 
-import com.direwolf20.buildinggadgets2.api.gadgets.BlockPos;
 import com.direwolf20.buildinggadgets2.util.GadgetUtils;
 import com.direwolf20.buildinggadgets2.util.ItemStackKey;
 import cpw.mods.fml.relauncher.Side;
@@ -115,7 +114,7 @@ public class StatePos {
         if (list == null || list.isEmpty())
             return itemList;
         for (StatePos statePos : list) {
-            ItemStackKey itemStackKey = new ItemStackKey(GadgetUtils.getItemForBlock(statePos.state, Minecraft.getInstance().level, BlockPos.ZERO, Minecraft.getInstance().player), true);
+            ItemStackKey itemStackKey = new ItemStackKey(GadgetUtils.getItemForBlock(statePos.state, Minecraft.getInstance().level, BlockPos.ZERO, , Minecraft.getInstance().player), true);
             if (!itemList.containsKey(itemStackKey)) //Todo Slabs, etc
                 itemList.put(itemStackKey, 1);
             else

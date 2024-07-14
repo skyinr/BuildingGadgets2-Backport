@@ -1,15 +1,9 @@
 package com.direwolf20.buildinggadgets2.util;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.AxisAlignedBB;
 
 public class VecHelpers {
-    public static Vec3 blockPosToVec3(BlockPos pos) {
-        return new Vec3(pos.getX(), pos.getY(), pos.getZ());
-    }
-
-    public static AABB aabbFromBlockPos(BlockPos start, BlockPos end) {
-        return new AABB(blockPosToVec3(start), blockPosToVec3(end));
+    public static AxisAlignedBB aabbFromBlockPos(int xStart, int yStart, int zStart, int xEnd, int yEnd, int zEnd) {
+        return AxisAlignedBB.getBoundingBox(xStart, yStart, zStart, xEnd, yEnd, zEnd);
     }
 }

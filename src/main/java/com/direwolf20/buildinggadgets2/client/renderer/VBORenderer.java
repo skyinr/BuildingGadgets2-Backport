@@ -33,7 +33,6 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -366,7 +365,7 @@ public class VBORenderer {
         BlockState renderBlockState = GadgetNBT.getGadgetBlockState(gadget);
         if ((gadget.getItem() instanceof GadgetBuilding || gadget.getItem() instanceof GadgetExchanger) && !player.isCreative() && !hasBound && renderBlockState.getFluidState().isEmpty()) {
 
-            ItemStack findStack = GadgetUtils.getItemForBlock(renderBlockState, player.level(), BlockPos.ZERO, player);
+            ItemStack findStack = GadgetUtils.getItemForBlock(renderBlockState, player.level(), BlockPos.ZERO, , player);
             int availableItems = BuildingUtils.countItemStacks(player, findStack);
             int energyStored = BuildingUtils.getEnergyStored(gadget);
             int energyCost = BuildingUtils.getEnergyCost(gadget);

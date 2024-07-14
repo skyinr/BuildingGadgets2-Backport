@@ -5,7 +5,7 @@ import com.direwolf20.buildinggadgets2.client.screen.ScreenOpener;
 import com.direwolf20.buildinggadgets2.common.events.ServerBuildList;
 import com.direwolf20.buildinggadgets2.common.events.ServerTickHandler;
 import com.direwolf20.buildinggadgets2.common.worlddata.BG2Data;
-import com.direwolf20.buildinggadgets2.setup.Config;
+import com.direwolf20.buildinggadgets2.config.BG2Config;
 import com.direwolf20.buildinggadgets2.util.BuildingUtils;
 import com.direwolf20.buildinggadgets2.util.GadgetNBT;
 import com.direwolf20.buildinggadgets2.util.GadgetUtils;
@@ -25,12 +25,12 @@ public class GadgetDestruction extends BaseGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.DESTRUCTIONGADGET_MAXPOWER;
+        return BG2Config.DESTRUCTIONGADGET_MAXPOWER;
     }
 
     @Override
     public int getEnergyCost() {
-        return Config.DESTRUCTIONGADGET_COST;
+        return BG2Config.DESTRUCTIONGADGET_COST;
     }
 
     @SideOnly(Side.CLIENT)

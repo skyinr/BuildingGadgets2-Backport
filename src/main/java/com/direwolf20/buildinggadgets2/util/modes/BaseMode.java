@@ -7,15 +7,10 @@ import com.direwolf20.buildinggadgets2.util.GadgetNBT;
 import com.direwolf20.buildinggadgets2.util.GadgetUtils;
 import com.direwolf20.buildinggadgets2.util.VectorHelper;
 import com.direwolf20.buildinggadgets2.util.datatypes.StatePos;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,8 +25,8 @@ public abstract class BaseMode implements Comparable<BaseMode> {
     /**
      * Collects a list of blocks that should be used when building and rendering the mode - Checks for an Anchor first
      */
-    public final ArrayList<StatePos> collect(Direction hitSide, Player player, BlockPos start, BlockState state) {
-        ItemStack gadget = BaseGadget.getGadget(player);
+    public final ArrayList<StatePos> collect(Direction hitSide, EntityPlayer player, int xStart,int yStart,int zStart, int xEnd,int yEnd,int zEnd) {
+        ItemStack gadget = BaseGadget.getGadget((EntityClientPlayerMP) player);
         final ArrayList<StatePos> buildList = new ArrayList<>();
         if (!player.mayBuild())
             return buildList;
@@ -46,7 +41,7 @@ public abstract class BaseMode implements Comparable<BaseMode> {
         return buildList;
     }
 
-    public abstract ArrayList<StatePos> collectWorld(Direction hitSide, Player player, BlockPos start, BlockState state);
+    public abstract ArrayList<StatePos> collectWorld(Direction hitSide, EntityPlayer player, BlockPos start, BlockState state);
 
     public abstract ResourceLocation getId();
 
@@ -64,7 +59,7 @@ public abstract class BaseMode implements Comparable<BaseMode> {
         return ResourceLocation.fromNamespaceAndPath(BuildingGadgets2.MODID, "textures/gui/mode/" + getId().getPath() + ".png");
     }
 
-    public boolean isPosValid(Level level, Player player, BlockPos blockPos, BlockState blockState) {
+    public boolean isPosValid(Level level, EntityPlayer player, BlockPos blockPos, BlockState blockState) {
         ItemStack gadget = BaseGadget.getGadget(player);
         if (!isExchangingValid(level, player, blockPos, gadget)) return false;
         if ((blockPos.getY() >= level.getMaxBuildHeight() || blockPos.getY() < level.getMinBuildHeight()))
@@ -78,7 +73,7 @@ public abstract class BaseMode implements Comparable<BaseMode> {
         return true;
     }
 
-    public ArrayList<StatePos> removeUnConnected(Level level, Player player, BlockPos startAt, ArrayList<StatePos> coordinates, Direction hitSide) {
+    public ArrayList<StatePos> removeUnConnected(Level level, EntityPlayer player, BlockPos startAt, ArrayList<StatePos> coordinates, Direction hitSide) {
         if (coordinates.isEmpty()) return coordinates;
         Map<BlockPos, BlockState> coordinatesPositions = coordinates.stream().collect(Collectors.toMap(e -> e.pos, e -> e.state));
         Set<StatePos> visitedBlocks = new HashSet<>(); //Blocks we've checked
@@ -102,11 +97,11 @@ public abstract class BaseMode implements Comparable<BaseMode> {
         return new ArrayList<>(visitedBlocks);
     }
 
-    public boolean isExchangingValid(Level level, Player player, BlockPos pos, ItemStack gadget) {
+    public boolean isExchangingValid(Level level, EntityPlayer player, BlockPos pos, ItemStack gadget) {
         if (!isExchanging) return true; //Don't do these checks if we're not exchanging
         if (level.getBlockState(pos).isAir())
             return false;
-        if (!GadgetUtils.isValidBlockState(level.getBlockState(pos), level, pos))
+        if (!GadgetUtils.isValidBlock(level.getBlockState(pos), level, pos))
             return false;
         boolean fuzzy = GadgetNBT.getSetting(gadget, GadgetNBT.ToggleableSettings.FUZZY.getName());
         BlockState oldState = level.getBlockState(pos);

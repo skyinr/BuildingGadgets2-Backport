@@ -5,17 +5,21 @@ import com.direwolf20.buildinggadgets2.common.blocks.RenderBlock;
 import com.direwolf20.buildinggadgets2.common.events.ServerBuildList;
 import com.direwolf20.buildinggadgets2.common.events.ServerTickHandler;
 import com.direwolf20.buildinggadgets2.common.worlddata.BG2Data;
-import com.direwolf20.buildinggadgets2.setup.Config;
+import com.direwolf20.buildinggadgets2.config.BG2Config;
 import com.direwolf20.buildinggadgets2.util.BuildingUtils;
 import com.direwolf20.buildinggadgets2.util.GadgetNBT;
 import com.direwolf20.buildinggadgets2.util.GadgetUtils;
-import com.direwolf20.buildinggadgets2.util.Styles;
 import com.direwolf20.buildinggadgets2.util.context.ItemActionContext;
 import com.direwolf20.buildinggadgets2.util.datatypes.StatePos;
 import com.direwolf20.buildinggadgets2.util.modes.BaseMode;
+import com.gtnewhorizon.gtnhlib.util.AnimatedTooltipHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.ItemStack;
 
 import java.util.*;
 
@@ -29,35 +33,39 @@ public class GadgetExchanger extends BaseGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.EXCHANGINGGADGET_MAXPOWER;
+        return BG2Config.EXCHANGINGGADGET_MAXPOWER;
     }
 
     @Override
     public int getEnergyCost() {
-        return Config.EXCHANGINGGADGET_COST;
+        return BG2Config.EXCHANGINGGADGET_COST;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, context, tooltip, flagIn);
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.player == null) {
-            return;
-        }
-
-        boolean sneakPressed = Screen.hasShiftDown();
-
-        if (sneakPressed) {
-            BaseMode mode = GadgetNBT.getMode(stack);
-            tooltip.add(Component.translatable("buildinggadgets2.tooltips.mode", Component.translatable(mode.i18n())).setStyle(Styles.AQUA));
-            tooltip.add(Component.translatable("buildinggadgets2.tooltips.range", GadgetNBT.getToolRange(stack)).setStyle(Styles.LT_PURPLE));
-            tooltip.add(Component.translatable("buildinggadgets2.tooltips.blockstate", GadgetNBT.getGadgetBlockState(stack).getBlock().getName()).setStyle(Styles.DK_GREEN));
-        }
+    public void addInformation(ItemStack itemStack, EntityPlayer p_77624_2_, List<String> p_77624_3_, boolean p_77624_4_) {
+        AnimatedTooltipHandler.addItemTooltip(itemStack,
+            AnimatedTooltipHandler.translatedText("buildinggadgets2.tooltips.mode"));
+        AnimatedTooltipHandler.addItemTooltip(itemStack,
+            AnimatedTooltipHandler.translatedText("buildinggadgets2.tooltips.range"));
+        AnimatedTooltipHandler.addItemTooltip(itemStack,
+            AnimatedTooltipHandler.translatedText("buildinggadgets2.tooltips.blockstate"));
     }
 
     @Override
-    InteractionResultHolder<ItemStack> onAction(ItemActionContext context) {
+    public EnumAction getItemUseAction(ItemStack gadget) {
+        Block setState = GadgetNBT.getGadgetBlockState(gadget);
+
+        if (setState.getMaterial() == Material.air) {
+            return EnumAction.none;
+        }
+        BaseMode mode = GadgetNBT.getMode(gadget);
+
+        return super.getItemUseAction(gadget);
+    }
+
+    @Override
+    EnumAction<ItemStack> onAction(ItemActionContext context) {
         var gadget = context.stack();
 
         BlockState setState = GadgetNBT.getGadgetBlockState(gadget);
@@ -78,11 +86,11 @@ public class GadgetExchanger extends BaseGadget {
     @Override
     InteractionResultHolder<ItemStack> onShiftAction(ItemActionContext context) {
         BlockState blockState = context.level().getBlockState(context.pos());
-        if (!GadgetUtils.isValidBlockState(blockState, context.level(), context.pos()) || blockState.getBlock() instanceof RenderBlock) {
+        if (!GadgetUtils.isValidBlock(blockState, context.level(), context.pos()) || blockState.getBlock() instanceof RenderBlock) {
             context.player().displayClientMessage(Component.translatable("buildinggadgets2.messages.invalidblock"), true);
             return super.onShiftAction(context);
         }
-        if (GadgetUtils.setBlockState(context.stack(), blockState))
+        if (GadgetUtils.setBlock(context.stack(), blockState))
             return InteractionResultHolder.success(context.stack());
 
         return super.onShiftAction(context);

@@ -125,7 +125,7 @@ public class ModeRadialMenu extends Screen {
         //Building and Exchanging Gadget Only
         if (tool.getItem() instanceof GadgetBuilding || tool.getItem() instanceof GadgetExchanger) {
             int widthSlider = 82;
-            IncrementalSliderWidget sliderRange = new IncrementalSliderWidget(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, 1, /*Config.GADGETS.maxRange.get()*/15, Component.translatable("buildinggadgets2.gui.range").append(": "), GadgetNBT.getToolRange(tool), slider -> {
+            IncrementalSliderWidget sliderRange = new IncrementalSliderWidget(width / 2 - widthSlider / 2, height / 2 + 72, widthSlider, 14, 1, /*BG2Config.GADGETS.maxRange.get()*/15, Component.translatable("buildinggadgets2.gui.range").append(": "), GadgetNBT.getToolRange(tool), slider -> {
                 sendRangeUpdate(slider.getValueInt());
             });
             sliderRange.getComponents().forEach(this::addRenderableWidget);

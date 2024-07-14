@@ -11,6 +11,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -68,7 +70,7 @@ public class BG2Data extends SavedData {
         return undoList.containsKey(uuid);
     }
 
-    public void addToUndoList(UUID uuid, ArrayList<StatePos> list, Level level) {
+    public void addToUndoList(UUID uuid, ArrayList<StatePos> list, World level) {
         undoList.put(uuid, list);
         this.setDirty();
     }
@@ -279,7 +281,7 @@ public class BG2Data extends SavedData {
         return new BG2Data(undoList, copyPaste, teMap, redPrints);
     }
 
-    public static BG2Data get(ServerLevel world) {
+    public static BG2Data get(WorldServer world) {
         BG2Data bg2Data = world.getDataStorage().computeIfAbsent(
                 new SavedData.Factory<BG2Data>(
                         () -> new BG2Data(new HashMap<>(), new HashMap<>(), new HashMap<>(), HashBiMap.create()),

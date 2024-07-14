@@ -2,11 +2,10 @@ package com.direwolf20.buildinggadgets2.common.items;
 
 import com.direwolf20.buildinggadgets2.api.gadgets.GadgetTarget;
 import com.direwolf20.buildinggadgets2.common.blocks.RenderBlock;
-import com.direwolf20.buildinggadgets2.setup.Config;
+import com.direwolf20.buildinggadgets2.config.BG2Config;
 import com.direwolf20.buildinggadgets2.util.BuildingUtils;
 import com.direwolf20.buildinggadgets2.util.GadgetNBT;
 import com.direwolf20.buildinggadgets2.util.GadgetUtils;
-import com.direwolf20.buildinggadgets2.util.Styles;
 import com.direwolf20.buildinggadgets2.util.context.ItemActionContext;
 import com.direwolf20.buildinggadgets2.util.datatypes.StatePos;
 import com.direwolf20.buildinggadgets2.util.modes.BaseMode;
@@ -34,12 +33,12 @@ public class GadgetBuilding extends BaseGadget {
 
     @Override
     public int getEnergyMax() {
-        return Config.BUILDINGGADGET_MAXPOWER;
+        return BG2Config.BUILDINGGADGET_MAXPOWER;
     }
 
     @Override
     public int getEnergyCost() {
-        return Config.BUILDINGGADGET_COST;
+        return BG2Config.BUILDINGGADGET_COST;
     }
 
 //    @OnlyIn(Dist.CLIENT)
@@ -83,11 +82,11 @@ public class GadgetBuilding extends BaseGadget {
     @Override
     InteractionResultHolder<ItemStack> onShiftAction(ItemActionContext context) {
         BlockState blockState = context.level().getBlockState(context.pos());
-        if (!GadgetUtils.isValidBlockState(blockState, context.level(), context.pos()) || blockState.getBlock() instanceof RenderBlock) {
+        if (!GadgetUtils.isValidBlock(blockState, context.level(), context.pos()) || blockState.getBlock() instanceof RenderBlock) {
             context.player().displayClientMessage(Component.translatable("buildinggadgets2.messages.invalidblock"), true);
             return super.onShiftAction(context);
         }
-        if (GadgetUtils.setBlockState(context.stack(), blockState))
+        if (GadgetUtils.setBlock(context.stack(), blockState))
             return InteractionResultHolder.success(context.stack());
 
         return super.onShiftAction(context);
