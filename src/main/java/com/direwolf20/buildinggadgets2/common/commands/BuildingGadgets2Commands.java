@@ -1,15 +1,12 @@
 package com.direwolf20.buildinggadgets2.common.commands;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.CommandEvent;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-
-import java.util.function.Consumer;
 
 public class BuildingGadgets2Commands {
+    @SubscribeEvent
     public static void registerCommands(CommandEvent event) {
+
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("buildinggadgets2");
 
         // sub commands

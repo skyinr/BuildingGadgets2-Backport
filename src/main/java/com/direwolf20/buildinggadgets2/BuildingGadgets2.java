@@ -13,7 +13,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,8 +27,8 @@ public class BuildingGadgets2 {
 
     public BuildingGadgets2() {
 
-        eventBus.addListener(PacketHandler::registerNetworking);
-        ForgeModContainer.getConfig().EVENT_BUS.addListener(BuildingGadgets2Commands::registerCommands);
+        MinecraftForge.EVENT_BUS.register(PacketHandler.class);
+        MinecraftForge.EVENT_BUS.register(BuildingGadgets2Commands.class);
     }
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {

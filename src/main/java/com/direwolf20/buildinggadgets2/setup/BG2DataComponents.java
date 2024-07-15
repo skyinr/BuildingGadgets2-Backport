@@ -1,29 +1,33 @@
 package com.direwolf20.buildinggadgets2.setup;
 
+import com.direwolf20.buildinggadgets2.util.GadgetNBT;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class BG2DataComponents {
-//    public static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister.createDataComponents(BuildingGadgets2.MODID);
-//
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlobalPos>> BOUND_GLOBAL_POS = COMPONENTS.register("bound_global_pos", () -> DataComponentType.<GlobalPos>builder().persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockPos>> ANCHOR_POS = COMPONENTS.register("anchor_pos", () -> DataComponentType.<BlockPos>builder().persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Byte>> RENDER_TYPE = COMPONENTS.register("render_type", () -> DataComponentType.<Byte>builder().persistent(Codec.BYTE).networkSynchronized(ByteBufCodecs.BYTE).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ANCHOR_SIDE = COMPONENTS.register("anchor_side", () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<BlockPos>>> ANCHOR_LIST = COMPONENTS.register("anchor_list", () -> DataComponentType.<List<BlockPos>>builder().persistent(BlockPos.CODEC.listOf()).networkSynchronized(BlockPos.STREAM_CODEC.apply(ByteBufCodecs.list())).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockPos>> COPY_START_POS = COMPONENTS.register("copy_start_pos", () -> DataComponentType.<BlockPos>builder().persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockPos>> COPY_END_POS = COMPONENTS.register("copy_end_pos", () -> DataComponentType.<BlockPos>builder().persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockPos>> RELATIVE_PASTE = COMPONENTS.register("relative_paste", () -> DataComponentType.<BlockPos>builder().persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> GADGET_UUID = COMPONENTS.register("gadget_uuid", () -> DataComponentType.<UUID>builder().persistent(UUIDUtil.CODEC).networkSynchronized(UUIDUtil.STREAM_CODEC).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> COPY_UUID = COMPONENTS.register("copy_uuid", () -> DataComponentType.<UUID>builder().persistent(UUIDUtil.CODEC).networkSynchronized(UUIDUtil.STREAM_CODEC).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockState>> GADGET_BLOCKSTATE = COMPONENTS.register("gadget_blockstate", () -> DataComponentType.<BlockState>builder().persistent(BlockState.CODEC).networkSynchronized(ByteBufCodecs.idMapper(Block.BLOCK_STATE_REGISTRY)).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<UUID>>> UNDO_LIST = COMPONENTS.register("undo_list", () -> DataComponentType.<List<UUID>>builder().persistent(UUIDUtil.CODEC.listOf()).networkSynchronized(UUIDUtil.STREAM_CODEC.apply(ByteBufCodecs.list())).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> GADGET_RANGE = COMPONENTS.register("gadget_range", () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> TEMPLATE_NAME = COMPONENTS.register("template_name", () -> DataComponentType.<String>builder().persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8).build());
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> GADGET_MODE = COMPONENTS.register("gadget_mode", () -> DataComponentType.<String>builder().persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8).build());
-//
-//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FORGE_ENERGY = COMPONENTS.register("forge_energy", () -> DataComponentType.<Integer>builder().persistent(Codec.INT.orElse(0)).networkSynchronized(ByteBufCodecs.VAR_INT).build());
-//
-//    public static final Map<GadgetNBT.ToggleableSettings, DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>>> SETTING_TOGGLES = new HashMap<>();
-//    public static final Map<GadgetNBT.IntSettings, DeferredHolder<DataComponentType<?>, DataComponentType<Integer>>> SETTING_VALUES = new HashMap<>();
-//
+    public static final String BOUND_GLOBAL_POS = "bound_global_pos";
+    public static final String ANCHOR_POS = "anchor_pos";
+    public static final String RENDER_TYPE = "render_type";
+    public static final String ANCHOR_SIDE = "anchor_side";
+    public static final String ANCHOR_LIST = "anchor_list";
+    public static final String COPY_START_POS = "copy_start_pos";
+    public static final String COPY_END_POS = "copy_end_pos";
+    public static final String RELATIVE_PASTE = "relative_paste";
+    public static final String GADGET_UUID = "gadget_uuid";
+    public static final String COPY_UUID = "copy_uuid";
+    public static final String GADGET_BLOCKSTATE = "gadget_blockstate";
+    public static final String UNDO_LIST = "undo_list";
+    public static final String GADGET_RANGE = "gadget_range";
+    public static final String TEMPLATE_NAME = "template_name";
+    public static final String GADGET_MODE = "gadget_mode";
+
+    public static final String ENERGY = "energy";
+
+    public static final Map<GadgetNBT.ToggleableSettings, ArrayList<Boolean>> SETTING_TOGGLES = new HashMap<>();
+    public static final Map<GadgetNBT.IntSettings, ArrayList<Integer>> SETTING_VALUES = new HashMap<>();
+
 //    public static void genSettingToggles() {
 //        for (GadgetNBT.ToggleableSettings toggleableSetting : GadgetNBT.ToggleableSettings.values()) {
 //            DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> SETTING_TOGGLE = COMPONENTS.register(toggleableSetting.getName() + "_toggle", () -> DataComponentType.<Boolean>builder().persistent(Codec.BOOL.orElse(false)).networkSynchronized(ByteBufCodecs.BOOL).build());

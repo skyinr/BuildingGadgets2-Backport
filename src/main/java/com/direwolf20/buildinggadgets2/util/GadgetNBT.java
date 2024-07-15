@@ -9,9 +9,16 @@ import com.direwolf20.buildinggadgets2.util.modes.BaseMode;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.*;
+import java.util.Locale;
+import java.util.UUID;
 
 public class GadgetNBT {
     public enum ToggleableSettings {
@@ -93,170 +100,229 @@ public class GadgetNBT {
         }
     }
 
-    public final static BlockPos nullPos = new BlockPos(-999, -999, -999);
+    public static final int[] nullPos = new int[]{-999, -999, -999};
+    public static final int[] zeroPos = new int[]{0, 0, 0};
     final static int undoListSize = 10;
 
-    public static void setBoundPos(ItemStack gadget, GlobalPos globalPos) {
-        gadget.setTagInfo(globalPos,BG2DataComponents.BOUND_GLOBAL_POS);
-//        gadget.set(BG2DataComponents.BOUND_GLOBAL_POS, globalPos);
-    }
-
-    public static GlobalPos getBoundPos(ItemStack gadget) {
-        return gadget.getOrDefault(BG2DataComponents.BOUND_GLOBAL_POS, null);
-    }
+//    public static void setBoundPos(ItemStack gadget, GlobalPos globalPos) {
+//        gadget.setTagInfo(globalPos,BG2DataComponents.BOUND_GLOBAL_POS);
+////        gadget.set(BG2DataComponents.BOUND_GLOBAL_POS, globalPos);
+//    }
+//
+//    public static GlobalPos getBoundPos(ItemStack gadget) {
+//        return gadget.getOrDefault(BG2DataComponents.BOUND_GLOBAL_POS, null);
+//    }
 
     public static void clearBoundPos(ItemStack gadget) {
-        gadget.remove(BG2DataComponents.BOUND_GLOBAL_POS);
+        gadget.getTagCompound().removeTag(BG2DataComponents.BOUND_GLOBAL_POS);
     }
 
-    public static void setAnchorPos(ItemStack gadget, BlockPos blockPos) {
-        gadget.set(BG2DataComponents.ANCHOR_POS, blockPos);
+    public static void setAnchorPos(ItemStack gadget, int xPos, int yPos, int zPos) {
+        gadget.getTagCompound().setIntArray(BG2DataComponents.ANCHOR_POS, new int[]{xPos, yPos, zPos});
     }
 
     public static void setRenderType(ItemStack gadget, byte renderType) {
-        gadget.set(BG2DataComponents.RENDER_TYPE, renderType);
+        gadget.getTagCompound().setByte(BG2DataComponents.RENDER_TYPE, renderType);
     }
 
     public static byte getRenderTypeByte(ItemStack stack) {
-        return stack.getOrDefault(BG2DataComponents.RENDER_TYPE, 0).byteValue();
+        if (!stack.hasTagCompound()) {
+            stack.setTagCompound(new NBTTagCompound());
+        }
+        if (!stack.getTagCompound().hasKey(BG2DataComponents.RENDER_TYPE)) {
+            stack.getTagCompound().setByte(BG2DataComponents.RENDER_TYPE, (byte) 0);
+        }
+        return stack.getTagCompound().getByte(BG2DataComponents.RENDER_TYPE);
     }
 
     public static RenderTypes getRenderType(ItemStack stack) {
         return RenderTypes.getByOrdinal(getRenderTypeByte(stack));
     }
 
-    public static BlockPos getAnchorPos(ItemStack gadget) {
-        return gadget.getOrDefault(BG2DataComponents.ANCHOR_POS, nullPos);
+    public static int[] getAnchorPos(ItemStack gadget) {
+        if (!gadget.hasTagCompound()) {
+            gadget.setTagCompound(new NBTTagCompound());
+        }
+        if (!gadget.getTagCompound().hasKey(BG2DataComponents.ANCHOR_POS)) {
+            gadget.getTagCompound().setIntArray(BG2DataComponents.ANCHOR_POS, nullPos);
+        }
+        return gadget.getTagCompound().getIntArray(BG2DataComponents.ANCHOR_POS);
     }
 
     public static void clearAnchorPos(ItemStack gadget) {
-        gadget.remove(BG2DataComponents.ANCHOR_POS);
-        gadget.remove(BG2DataComponents.ANCHOR_LIST);
-        gadget.remove(BG2DataComponents.ANCHOR_SIDE);
+        if (!gadget.hasTagCompound()) {
+            return;
+        }
+        gadget.getTagCompound().removeTag(BG2DataComponents.ANCHOR_POS);
+        gadget.getTagCompound().removeTag(BG2DataComponents.ANCHOR_LIST);
+        gadget.getTagCompound().removeTag(BG2DataComponents.ANCHOR_SIDE);
     }
 
-    public static List<BlockPos> getAnchorList(ItemStack gadget) {
-        return gadget.getOrDefault(BG2DataComponents.ANCHOR_LIST, new ArrayList<>());
+    public static NBTTagList getAnchorList(ItemStack gadget) {
+        if (!gadget.hasTagCompound()) {
+            gadget.setTagCompound(new NBTTagCompound());
+        }
+        if (!gadget.getTagCompound().hasKey(BG2DataComponents.ANCHOR_LIST)) {
+            gadget.getTagCompound().setTag(BG2DataComponents.ANCHOR_LIST, new NBTTagList());
+        }
+        return gadget.getTagCompound().getTagList(BG2DataComponents.ANCHOR_LIST, 11);
     }
 
-    public static void setAnchorList(ItemStack gadget, ArrayList<BlockPos> anchorList) {
-        gadget.set(BG2DataComponents.ANCHOR_LIST, anchorList);
+    public static void setAnchorList(ItemStack gadget, NBTTagList anchorList) {
+        if (!gadget.hasTagCompound()) {
+            gadget.setTagCompound(new NBTTagCompound());
+        }
+        gadget.getTagCompound().setTag(BG2DataComponents.ANCHOR_LIST, anchorList);
     }
 
-    public static void setAnchorSide(ItemStack stack, Direction side) {
+    public static void setAnchorSide(ItemStack stack, ForgeDirection side) {
         if (side == null)
-            stack.remove(BG2DataComponents.ANCHOR_SIDE);
+            stack.getTagCompound().removeTag(BG2DataComponents.ANCHOR_SIDE);
         else
-            stack.set(BG2DataComponents.ANCHOR_SIDE, side.ordinal());
+            stack.getTagCompound().setInteger(BG2DataComponents.ANCHOR_SIDE, side.ordinal());
     }
 
-    public static Direction getAnchorSide(ItemStack stack) {
-        if (!stack.has(BG2DataComponents.ANCHOR_SIDE)) return null;
-        return Direction.values()[stack.get(BG2DataComponents.ANCHOR_SIDE)];
+    public static ForgeDirection getAnchorSide(ItemStack stack) {
+        if (!stack.getTagCompound().hasKey(BG2DataComponents.ANCHOR_SIDE)) {
+            return null;
+        }
+        return ForgeDirection.values()[stack.getTagCompound().getInteger(BG2DataComponents.ANCHOR_SIDE)];
     }
 
-    public static void setCopyStartPos(ItemStack gadget, BlockPos blockPos) {
-        gadget.set(BG2DataComponents.COPY_START_POS, blockPos);
+    public static void setCopyStartPos(ItemStack gadget, int[] blockPos) {
+        gadget.getTagCompound().setIntArray(BG2DataComponents.COPY_START_POS, blockPos);
     }
 
-    public static BlockPos getCopyStartPos(ItemStack gadget) {
-        return gadget.getOrDefault(BG2DataComponents.COPY_START_POS, nullPos);
+    public static int[] getCopyStartPos(ItemStack gadget) {
+        if (!gadget.hasTagCompound()) {
+            gadget.setTagCompound(new NBTTagCompound());
+        }
+        if (!gadget.getTagCompound().hasKey(BG2DataComponents.COPY_START_POS)) {
+            gadget.getTagCompound().setIntArray(BG2DataComponents.COPY_START_POS, nullPos);
+        }
+        return gadget.getTagCompound().getIntArray(BG2DataComponents.COPY_START_POS);
     }
 
-    public static void setRelativePaste(ItemStack gadget, BlockPos blockPos) {
-        gadget.set(BG2DataComponents.RELATIVE_PASTE, blockPos);
+    public static void setRelativePaste(ItemStack gadget, int[] blockPos) {
+        gadget.getTagCompound().setIntArray(BG2DataComponents.RELATIVE_PASTE, blockPos);
     }
 
-    public static BlockPos getRelativePaste(ItemStack gadget) {
-        return gadget.getOrDefault(BG2DataComponents.RELATIVE_PASTE, BlockPos.ZERO);
+    public static int[] getRelativePaste(ItemStack gadget) {
+        if (!gadget.hasTagCompound()) {
+            gadget.setTagCompound(new NBTTagCompound());
+        }
+        if (!gadget.getTagCompound().hasKey(BG2DataComponents.RELATIVE_PASTE)) {
+            gadget.getTagCompound().setIntArray(BG2DataComponents.RELATIVE_PASTE, zeroPos);
+        }
+        return gadget.getTagCompound().getIntArray(BG2DataComponents.RELATIVE_PASTE);
     }
 
-    public static void setCopyEndPos(ItemStack gadget, BlockPos blockPos) {
-        gadget.set(BG2DataComponents.COPY_END_POS, blockPos);
+    public static void setCopyEndPos(ItemStack gadget, int[] blockPos) {
+        gadget.getTagCompound().setIntArray(BG2DataComponents.COPY_END_POS, blockPos);
     }
 
-    public static BlockPos getCopyEndPos(ItemStack gadget) {
-        return gadget.getOrDefault(BG2DataComponents.COPY_END_POS, nullPos);
+    public static int[] getCopyEndPos(ItemStack gadget) {
+        if (!gadget.hasTagCompound()) {
+            gadget.setTagCompound(new NBTTagCompound());
+        }
+        if (!gadget.getTagCompound().hasKey(BG2DataComponents.COPY_END_POS)) {
+            gadget.getTagCompound().setIntArray(BG2DataComponents.COPY_END_POS, nullPos);
+        }
+        return gadget.getTagCompound().getIntArray(BG2DataComponents.COPY_START_POS);
     }
 
     public static UUID setUUID(ItemStack gadget) {
         UUID uuid = UUID.randomUUID();
-        gadget.set(BG2DataComponents.GADGET_UUID, uuid);
+        gadget.getTagCompound().setString(BG2DataComponents.GADGET_UUID, uuid.toString());
         return uuid;
     }
 
     public static UUID getUUID(ItemStack gadget) {
-        if (!gadget.has(BG2DataComponents.GADGET_UUID))
+        if (!gadget.getTagCompound().hasKey(BG2DataComponents.GADGET_UUID))
             return setUUID(gadget);
-        return gadget.get(BG2DataComponents.GADGET_UUID);
+        return UUID.fromString(gadget.getTagCompound().getString(BG2DataComponents.GADGET_UUID));
     }
 
     public static UUID setCopyUUID(ItemStack gadget) {
         UUID uuid = UUID.randomUUID();
-        gadget.set(BG2DataComponents.COPY_UUID, uuid);
-        return uuid;
+        return setCopyUUID(gadget, uuid);
     }
 
     public static UUID setCopyUUID(ItemStack gadget, UUID uuid) {
-        gadget.set(BG2DataComponents.COPY_UUID, uuid);
+        gadget.getTagCompound().setString(BG2DataComponents.COPY_UUID, uuid.toString());
         return uuid;
     }
 
     public static UUID getCopyUUID(ItemStack gadget) {
-        if (!gadget.has(BG2DataComponents.COPY_UUID))
+        if (!gadget.getTagCompound().hasKey(BG2DataComponents.COPY_UUID)) {
             return setCopyUUID(gadget);
-        return gadget.get(BG2DataComponents.COPY_UUID);
+        }
+        return UUID.fromString(gadget.getTagCompound().getString(BG2DataComponents.COPY_UUID));
     }
 
     public static boolean hasCopyUUID(ItemStack gadget) {
-        return gadget.has(BG2DataComponents.COPY_UUID);
+        return gadget.getTagCompound().hasKey(BG2DataComponents.COPY_UUID);
     }
 
     public static void clearCopyUUID(ItemStack gadget) {
-        gadget.remove(BG2DataComponents.COPY_UUID);
+        gadget.getTagCompound().removeTag(BG2DataComponents.COPY_UUID);
     }
 
     public static void setGadgetBlock(ItemStack gadget, Block block) {
-        gadget.setTagCompound(BG2DataComponents.GADGET_BLOCKSTATE,block);
-//        gadget.set(BG2DataComponents.GADGET_BLOCKSTATE, block);
+        gadget.getTagCompound().setInteger(BG2DataComponents.GADGET_BLOCKSTATE,
+            Block.getIdFromBlock(block));
     }
 
     public static Block getGadgetBlockState(ItemStack gadget) {
-        return gadget.getOrDefault(BG2DataComponents.GADGET_BLOCKSTATE, Blocks.AIR.defaultBlockState());
+        if (!gadget.hasTagCompound()) {
+            gadget.setTagCompound(new NBTTagCompound());
+        }
+        if (!gadget.getTagCompound().hasKey(BG2DataComponents.GADGET_BLOCKSTATE)) {
+            gadget.getTagCompound().setInteger(BG2DataComponents.GADGET_BLOCKSTATE, Block.getIdFromBlock(Blocks.air));
+        }
+        return Block.getBlockById(gadget.getTagCompound().getInteger(BG2DataComponents.GADGET_BLOCKSTATE));
     }
 
     public static boolean shouldRayTraceFluid(ItemStack stack) {
         return getSetting(stack, ToggleableSettings.RAYTRACE_FLUID.getName());
     }
 
-    public static LinkedList<UUID> getUndoList(ItemStack gadget) {
-        return new LinkedList<>(gadget.getOrDefault(BG2DataComponents.UNDO_LIST, new ArrayList<>()));
+    public static NBTTagList getUndoList(ItemStack gadget) {
+        if (!gadget.hasTagCompound()) {
+            gadget.setTagCompound(new NBTTagCompound());
+        }
+        if (!gadget.getTagCompound().hasKey(BG2DataComponents.UNDO_LIST)) {
+            gadget.getTagCompound().setTag(BG2DataComponents.UNDO_LIST, new NBTTagList());
+        }
+        return gadget.getTagCompound().getTagList(BG2DataComponents.UNDO_LIST, 8);
     }
 
-    public static void setUndoList(ItemStack gadget, LinkedList<UUID> undoList) {
-        gadget.set(BG2DataComponents.UNDO_LIST, undoList);
+    public static void setUndoList(ItemStack gadget, NBTTagList undoList) {
+        gadget.getTagCompound().setTag(BG2DataComponents.UNDO_LIST, undoList);
     }
 
     public static void addToUndoList(ItemStack gadget, UUID uuid, BG2Data bg2Data) {
-        LinkedList<UUID> undoList = getUndoList(gadget);
-        if (undoList.size() >= undoListSize) {
-            UUID removal = undoList.removeFirst();
+        NBTTagList undoList = getUndoList(gadget);
+        if (undoList.tagCount() >= undoListSize) {
+            //TODO forEach remove time:2024-07-15 13:50
+            UUID removal = UUID.fromString(undoList.removeTag(0).toString());
             bg2Data.removeFromUndoList(removal);
         }
-        undoList.add(uuid);
+        undoList.appendTag(new NBTTagString(uuid.toString()));
         setUndoList(gadget, undoList);
     }
 
     public static UUID peekUndoList(ItemStack gadget) {
-        LinkedList<UUID> undoList = getUndoList(gadget);
-        if (undoList.isEmpty()) return null;
-        return undoList.getLast();
+        NBTTagList undoList = getUndoList(gadget);
+        if (undoList.tagCount() == 0) return null;
+        //TODO maybe use stream?
+        return UUID.fromString(undoList.getStringTagAt(0));
     }
 
     public static UUID popUndoList(ItemStack gadget) {
-        LinkedList<UUID> undoList = getUndoList(gadget);
-        if (undoList.isEmpty()) return null;
-        UUID uuid = undoList.removeLast();
+        NBTTagList undoList = getUndoList(gadget);
+        if (undoList.tagCount() == 0) return null;
+        UUID uuid = UUID.fromString(undoList.removeTag(undoList.tagCount() - 1).toString());
         setUndoList(gadget, undoList);
         return uuid;
     }
@@ -327,32 +393,32 @@ public class GadgetNBT {
         if (mode.isEmpty()) {
             if (stack.getItem() instanceof GadgetBuilding)
                 return modesForGadget.stream()
-                        .filter(m -> m.getId().getPath().equals("build_to_me"))
-                        .findFirst()
-                        .orElse(modesForGadget.first());
+                    .filter(m -> m.getId().getPath().equals("build_to_me"))
+                    .findFirst()
+                    .orElse(modesForGadget.first());
             if (stack.getItem() instanceof GadgetExchanger)
                 return modesForGadget.stream()
-                        .filter(m -> m.getId().getPath().equals("surface"))
-                        .findFirst()
-                        .orElse(modesForGadget.first());
+                    .filter(m -> m.getId().getPath().equals("surface"))
+                    .findFirst()
+                    .orElse(modesForGadget.first());
             if (stack.getItem() instanceof GadgetCutPaste)
                 return modesForGadget.stream()
-                        .filter(m -> m.getId().getPath().equals("cut"))
-                        .findFirst()
-                        .orElse(modesForGadget.first());
+                    .filter(m -> m.getId().getPath().equals("cut"))
+                    .findFirst()
+                    .orElse(modesForGadget.first());
             if (stack.getItem() instanceof GadgetCopyPaste)
                 return modesForGadget.stream()
-                        .filter(m -> m.getId().getPath().equals("copy"))
-                        .findFirst()
-                        .orElse(modesForGadget.first());
+                    .filter(m -> m.getId().getPath().equals("copy"))
+                    .findFirst()
+                    .orElse(modesForGadget.first());
             return modesForGadget.first();
         }
 
         var id = ResourceLocation.parse(mode);
         return modesForGadget.stream()
-                .filter(m -> m.getId().equals(id))
-                .findFirst()
-                .orElse(modesForGadget.first());
+            .filter(m -> m.getId().equals(id))
+            .findFirst()
+            .orElse(modesForGadget.first());
     }
 
     public static void setMode(ItemStack gadget, BaseMode mode) {

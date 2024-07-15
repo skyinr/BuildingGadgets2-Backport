@@ -12,9 +12,11 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.ChunkCoordComparator;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.oredict.OreDictionary;
@@ -188,8 +190,9 @@ public class GadgetUtils {
         ForgeDirection right = vertical? up.getOpposite(): face.getOpposite();
         ForgeDirection left = right.getOpposite();
 
+        return new ArrayList<>();
         //TODO code: 2024-07-15 1:32
-        AxisAlignedBB box = VecHelpers.aabbFromBlockPos()
+//        AxisAlignedBB box = VecHelpers.aabbFromBlockPos();
 
         //——————Old Code——————
 //        int depth = GadgetNBT.getToolValue(gadget, GadgetNBT.IntSettings.DEPTH.getName());
@@ -228,11 +231,7 @@ public class GadgetUtils {
     }
 
     //Because contains doesn't use <= just <
-    public static boolean direContains(AABB aabb, double x, double y, double z) {
+    public static boolean direContains(AxisAlignedBB aabb, double x, double y, double z) {
         return x >= aabb.minX && x <= aabb.maxX && y >= aabb.minY && y <= aabb.maxY && z >= aabb.minZ && z <= aabb.maxZ;
-    }
-
-    public static boolean direContains(AABB aabb, BlockPos pos) {
-        return direContains(aabb, xPos, yPos, zPos);
     }
 }
